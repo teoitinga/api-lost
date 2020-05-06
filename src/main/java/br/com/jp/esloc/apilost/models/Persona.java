@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @ToString(exclude="id")
 @EqualsAndHashCode(of={"id"})
 @Data
-@Slf4j
+
 public class Persona implements Serializable {
 
     private static final long serialVersionUID = 1L;
