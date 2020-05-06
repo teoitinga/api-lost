@@ -65,5 +65,11 @@ public class Persona implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "debito", precision = 22)
     private Double debito;
+	public Persona(String nome) {
+		this.nome = nome;
+	}
+	public Persona() {
+		
+	}
 
 }
