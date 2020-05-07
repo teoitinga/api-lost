@@ -5,11 +5,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jp.esloc.apilost.config.LostResponse;
@@ -17,6 +18,7 @@ import br.com.jp.esloc.apilost.models.Persona;
 import br.com.jp.esloc.apilost.services.PersonaService;
 
 @RestController
+@RequestMapping("/api/v1/users")
 public class PersonaResource {
 	
 	private static final Logger log = LoggerFactory.getLogger(PersonaResource.class);
@@ -24,24 +26,23 @@ public class PersonaResource {
 	@Autowired
 	private PersonaService personaService;
 	
-	@GetMapping("/pessoal")
-	public ResponseEntity<LostResponse<List<Persona>>> findAll() {
+	@GetMapping()
+	public Page<Persona> findAll(@RequestParam(value="page", defaultValue = "1") Integer page,
+			@RequestParam(value="size", defaultValue = "2") Integer size) {
+		
+		//public ResponseEntity<LostResponse<List<Persona>>> findAll() {
 		LostResponse<List<Persona>> response = new LostResponse<List<Persona>>();
 		
 		Pageable pageable = PageRequest.of(0, 10);
 		
-		List<Persona> pessoal = this.personaService.findAll();
+		Page<Persona> pessoal = this.personaService.findAll(PageRequest.of(page, size));
 		
-		//log.info("Quantidade de registros {} ", pessoal.size());
-		//log.info("Registro 01 {} ", pessoal.get(0).size());
-		response.setData(pessoal);
+		pessoal.forEach(pessoa -> System.out.println(pessoa.getNome()));
+		//response.setData(pessoal);
 		
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+//		return ResponseEntity.status(HttpStatus.OK).body(response);
+		return pessoal;
 		
-	}
-	@GetMapping("/home")
-	public String ola() {
-		return "Testando API lost";
 	}
 
 }

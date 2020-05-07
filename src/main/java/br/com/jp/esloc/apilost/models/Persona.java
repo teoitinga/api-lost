@@ -18,7 +18,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Getter
@@ -27,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 @ToString(exclude="id")
 @EqualsAndHashCode(of={"id"})
 @Data
-
 public class Persona implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -70,6 +68,12 @@ public class Persona implements Serializable {
 	}
 	public Persona() {
 		
+	}
+	public String getNome() {
+		return nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 }

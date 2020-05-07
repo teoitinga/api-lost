@@ -41,7 +41,7 @@ public class ApiLostApplication {
 				pessoal.add(new Persona("Pedro"));
 				pessoal.add(new Persona("Marculino"));
 				
-				log.info("Criando registro de pessoal{}", pessoal);
+				//log.info("Criando registro de pessoal{}", );
 				pessoal.forEach(pessoa -> personaService.save(pessoa));
 			}
 			

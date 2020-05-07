@@ -1,8 +1,8 @@
 package br.com.jp.esloc.apilost.services.impls;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.jp.esloc.apilost.exceptions.PersonaNotFound;
@@ -27,8 +27,8 @@ public class PersonaServiceImpl implements PersonaService{
 	}
 	**/
 	@Override
-	public List<Persona> findAll() {
-		return this.personaRepository.findAll();
+	public Page<Persona> findAll(Pageable page) {
+		return this.personaRepository.findAll(page);
 	}
 
 	@Override

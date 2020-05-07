@@ -1,6 +1,7 @@
 package br.com.jp.esloc.apilost.services;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import br.com.jp.esloc.apilost.exceptions.PersonaNotFound;
 import br.com.jp.esloc.apilost.models.Persona;
@@ -11,6 +12,6 @@ public interface PersonaService {
 	//Page<Persona> findAll(Pageable pageable);
 	Persona findById(Integer idPersona) throws PersonaNotFound;
 	boolean isContaining();
-	List<Persona> findAll();
+	Page<Persona> findAll(Pageable page);
 	
 }

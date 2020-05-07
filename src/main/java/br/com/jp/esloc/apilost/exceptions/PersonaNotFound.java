@@ -1,14 +1,17 @@
 package br.com.jp.esloc.apilost.exceptions;
 
-public class PersonaNotFound extends Exception{
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+@ResponseStatus(code=HttpStatus.NOT_FOUND)
+public class PersonaNotFound extends RuntimeException{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 5039536147849422457L;
-	
-	public PersonaNotFound(String msg) {
-		super(msg);
-	}
+	private static final long serialVersionUID = -3169680358676536064L;
 
+	public PersonaNotFound(String message) {
+		super(message);
+	}
+	
 }
