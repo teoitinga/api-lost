@@ -1,29 +1,15 @@
-package br.com.jp.esloc.apilost.models;
-
-import java.io.Serializable;
+package br.com.jp.esloc.apilost.domain;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@ToString(exclude="id")
-@EqualsAndHashCode(of={"id"})
 @Data
-public class Detalhecompra implements Serializable {
+public class DetalheCompraDto {
 
     private static final long serialVersionUID = 1L;
     @Id

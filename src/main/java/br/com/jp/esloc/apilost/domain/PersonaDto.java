@@ -1,36 +1,25 @@
-package br.com.jp.esloc.apilost.models;
+package br.com.jp.esloc.apilost.domain;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.modelmapper.ModelMapper;
+
+import br.com.jp.esloc.apilost.models.Persona;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@ToString(exclude="id")
-@EqualsAndHashCode(of={"id"})
 @Data
-public class Persona implements Serializable {
-
+public class PersonaDto implements Serializable{
+	
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
     @Getter @Setter private Integer id;
@@ -46,7 +35,7 @@ public class Persona implements Serializable {
     @Getter @Setter private String fone;
     @Column(name = "data_cadastro")
     @Temporal(TemporalType.TIMESTAMP)
-    @Getter @Setter private Date dataCadastro;
+    @Getter @Setter private LocalDateTime dataCadastro;
     @Column(name = "usuario")
     @Getter @Setter private Integer usuario;
     @Column(name = "prazo")
@@ -55,34 +44,16 @@ public class Persona implements Serializable {
     @Getter @Setter private Integer state;
     @Column(name = "ultAtualizacao")
     @Temporal(TemporalType.TIMESTAMP)
-    @Getter @Setter private Date ultAtualizacao;
+    @Getter @Setter private LocalDateTime ultAtualizacao;
     @Column(name = "senha")
     @Getter @Setter private String senha;
     @Column(name = "categoria")
     @Getter @Setter private String categoria;
     @Column(name = "debito", precision = 22)
     @Getter @Setter private Double debito;
-	public Persona(String nome, String rg, String apelido, String endereco, String fone, Date dataCadastro,
-			Integer usuario, Integer prazo, Integer state, Date ultAtualizacao, String senha, String categoria,
-			Double debito) {
-		super();
-		this.nome = nome;
-		this.rg = rg;
-		this.apelido = apelido;
-		this.endereco = endereco;
-		this.fone = fone;
-		this.dataCadastro = dataCadastro;
-		this.usuario = usuario;
-		this.prazo = prazo;
-		this.state = state;
-		this.ultAtualizacao = ultAtualizacao;
-		this.senha = senha;
-		this.categoria = categoria;
-		this.debito = debito;
-	}
-	public Persona(String nome) {
-		super();
-		this.nome = nome;
-	}
 
+    public static PersonaDto create(Persona persona) {
+    	ModelMapper model = new ModelMapper();
+    	return model.map(persona, PersonaDto.class);
+    }
 }
