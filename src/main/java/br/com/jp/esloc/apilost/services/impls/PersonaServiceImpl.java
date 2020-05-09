@@ -36,4 +36,10 @@ public class PersonaServiceImpl implements PersonaService{
 		return this.personaRepository.findAll().size()>0?true:false;
 	}
 
+	@Override
+	public void delete(Persona p) {
+		this.personaRepository.delete(p);
+		
+	}
+
 }
