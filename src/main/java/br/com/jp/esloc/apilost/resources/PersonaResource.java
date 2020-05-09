@@ -3,8 +3,6 @@ package br.com.jp.esloc.apilost.resources;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,8 +29,6 @@ import br.com.jp.esloc.apilost.services.PersonaService;
 @RestController
 @RequestMapping("/api/v1/users")
 public class PersonaResource {
-	
-	private static final Logger log = LoggerFactory.getLogger(PersonaResource.class);
 	
 	@Autowired
 	private PersonaService personaService;

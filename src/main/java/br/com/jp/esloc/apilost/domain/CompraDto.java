@@ -1,5 +1,6 @@
 package br.com.jp.esloc.apilost.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -10,14 +11,18 @@ import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.modelmapper.ModelMapper;
+
+import br.com.jp.esloc.apilost.models.Compra;
 import br.com.jp.esloc.apilost.models.Persona;
 import lombok.Data;
 
 @Data
-public class CompraDto {
+public class CompraDto implements Serializable{
 
-    private static final long serialVersionUID = 1L;
-    @Id
+	private static final long serialVersionUID = 401251212136707719L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
@@ -38,5 +43,9 @@ public class CompraDto {
     private Double valorCompra;
     @Column(name = "debAtual", precision = 22)
     private Double debAtual;
-   
+    
+    public static CompraDto create(Compra compra) {
+    	ModelMapper model = new ModelMapper();
+    	return model.map(compra, CompraDto.class);
+    }
 }

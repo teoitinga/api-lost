@@ -3,6 +3,7 @@ package br.com.jp.esloc.apilost.services.impls;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import br.com.jp.esloc.apilost.exceptions.CompraNotFound;
 import br.com.jp.esloc.apilost.exceptions.PersonaNotFound;
@@ -11,6 +12,7 @@ import br.com.jp.esloc.apilost.repositories.CompraRepository;
 import br.com.jp.esloc.apilost.repositories.DetalheCompraRepository;
 import br.com.jp.esloc.apilost.services.CompraService;
 
+@Service
 public class CompraServiceImpl implements CompraService{
 	
 	@Autowired
