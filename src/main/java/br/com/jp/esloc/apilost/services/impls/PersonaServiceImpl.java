@@ -20,12 +20,7 @@ public class PersonaServiceImpl implements PersonaService{
 	public Persona save(Persona persona) {
 		return this.personaRepository.save(persona);
 	}
-/**
-	@Override
-	public Page<Persona> findAll(Pageable pageable) {
-		return this.personaRepository.findAll(pageable);
-	}
-	**/
+
 	@Override
 	public Page<Persona> findAll(Pageable page) {
 		return this.personaRepository.findAll(page);
