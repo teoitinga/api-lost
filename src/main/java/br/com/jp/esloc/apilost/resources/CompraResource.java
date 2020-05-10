@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jp.esloc.apilost.domain.CompraDto;
-import br.com.jp.esloc.apilost.domain.DetalheCompraDto;
-import br.com.jp.esloc.apilost.domain.PersonaPostDto;
 import br.com.jp.esloc.apilost.models.Compra;
-import br.com.jp.esloc.apilost.models.Detalhecompra;
 import br.com.jp.esloc.apilost.responce.Response;
 import br.com.jp.esloc.apilost.services.CompraService;
 import br.com.jp.esloc.apilost.services.DetalheCompraService;
@@ -31,6 +28,7 @@ import br.com.jp.esloc.apilost.services.PersonaService;
 @RestController
 @RequestMapping("/api/v1/compras")
 public class CompraResource {
+
 	@Autowired
 	private PersonaService personaService;
 	
@@ -77,58 +75,37 @@ public class CompraResource {
 		
 		return ResponseEntity.ok().body(response);
 	}
-	@GetMapping("/itens")
-	public ResponseEntity<Response<Page<DetalheCompraDto>>> findItens(@RequestParam(value="page", defaultValue = "0") Integer page,
-			@RequestParam(value="size", defaultValue = "5") Integer size) {
+	
+	@PostMapping()
+	public ResponseEntity<Response<CompraDto>> create(@RequestBody CompraDto compra){
 		
-		Response<Page<DetalheCompraDto>> response = new Response<Page<DetalheCompraDto>>();
-		
-		Pageable pageable = PageRequest.of(0, 10);
-		
-		Page<Detalhecompra> compras = this.detalheCompraService.findAll(PageRequest.of(page, size));
-		
-		Page<DetalheCompraDto> itemDto = new PageImpl(compras.stream().map(DetalheCompraDto::create).collect(Collectors.toList()));
+		Response<CompraDto> response = new Response<CompraDto>();
 		
 		ModelMapper modelMapper = new ModelMapper();
+		Compra novaCompra = modelMapper.map(compra, Compra.class);
 		
-		Page<DetalheCompraDto> dto = new PageImpl(compras.stream().map(p -> modelMapper
-				.map(p, DetalheCompraDto.class)).collect(Collectors.toList()));
+		novaCompra = this.compraService.save(novaCompra);
 		
+		CompraDto dto = modelMapper.map(novaCompra, CompraDto.class);
 		response.setData(dto);
 		
-		return ResponseEntity.status(HttpStatus.OK).body(response);
-		
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
-	
-	@GetMapping("/itens/{id}")
-	public ResponseEntity<Response<DetalheCompraDto>> findItemById(@PathVariable("id") Integer id){
+	@GetMapping("/{idCliente}")
+	public ResponseEntity<Response<CompraDto>> findByCliente(@PathVariable("id") Integer id,
+			@PathVariable("idCliente") Integer idCliente){
 		
-		Response<DetalheCompraDto> response = new Response<DetalheCompraDto>();
+		Response<CompraDto> response = new Response<CompraDto>();
 		
-		Detalhecompra item = this.detalheCompraService.findById(id);
+		Compra item = this.compraService.findById(id);
 		
 		ModelMapper modelMapper = new ModelMapper();
 		
-		DetalheCompraDto itemDto = modelMapper.map(item, DetalheCompraDto.class);
+		CompraDto itemDto = modelMapper.map(item, CompraDto.class);
 		
 		response.setData(itemDto);
 		
 		return ResponseEntity.ok().body(response);
 	}
-	@PostMapping("/itens")
-	public ResponseEntity<Response<DetalheCompraDto>> findItemById(@PathVariable("idCompra") Integer id, 
-			@RequestBody PersonaPostDto persona){
-		
-		Response<DetalheCompraDto> response = new Response<DetalheCompraDto>();
-		
-		Detalhecompra item = this.detalheCompraService.findById(id);
-		
-		ModelMapper modelMapper = new ModelMapper();
-		
-		DetalheCompraDto itemDto = modelMapper.map(item, DetalheCompraDto.class);
-		
-		response.setData(itemDto);
-		
-		return ResponseEntity.ok().body(response);
-	}
+
 }

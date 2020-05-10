@@ -28,7 +28,7 @@ public class ApiLostApplication {
 	public class CommandLineAppStartupRunner implements CommandLineRunner {
 		@Override
 		public void run(String... args) throws Exception {
-			createPersonaIfNotExists();
+			//createPersonaIfNotExists();
 			
 		}
 		private void createPersonaIfNotExists() {

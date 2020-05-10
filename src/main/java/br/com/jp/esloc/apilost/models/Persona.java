@@ -28,8 +28,8 @@ import lombok.ToString;
 @Data
 public class Persona implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
+	private static final long serialVersionUID = -4586092888625020736L;
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
@@ -81,8 +81,6 @@ public class Persona implements Serializable {
 		this.debito = debito;
 	}
 	public Persona(String nome) {
-		super();
 		this.nome = nome;
 	}
-
 }

@@ -35,7 +35,7 @@ public class CompraDto implements Serializable{
     @Column(name = "entregue_por")
     private Integer entreguePor;
     @Column(name = "fk_cliente")
-    private Persona fkCliente;
+    private Integer fkCliente;
     @Column(name = "acertado_em")
     @Temporal(TemporalType.TIMESTAMP)
     private Date acertadoEm;
