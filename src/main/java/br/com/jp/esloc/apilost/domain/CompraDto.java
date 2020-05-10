@@ -12,11 +12,22 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.context.annotation.Bean;
 
 import br.com.jp.esloc.apilost.models.Compra;
-import br.com.jp.esloc.apilost.models.Persona;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(exclude="id")
+@EqualsAndHashCode(of={"id"})
 @Data
 public class CompraDto implements Serializable{
 
@@ -48,4 +59,16 @@ public class CompraDto implements Serializable{
     	ModelMapper model = new ModelMapper();
     	return model.map(compra, CompraDto.class);
     }
+
+	public CompraDto(Compra compra) {
+		this.id = compra.getId();
+		this.dataCompra = compra.getDataCompra();
+		this.entregueA = compra.getEntregueA();
+		this.entreguePor = compra.getEntreguePor();
+		this.fkCliente = compra.getFkCliente().getId();
+		this.acertadoEm = compra.getAcertadoEm();
+		this.valorCompra = compra.getValorCompra();
+		this.debAtual = compra.getDebAtual();
+	}
+
 }

@@ -12,4 +12,8 @@ public interface CompraService {
 	boolean isContaining();
 	Page<Compra> findAll(Pageable page);
 	void delete(Compra compra);
+	Compra findOne(String id);
+	Page<Compra> findByCliente(Pageable page, Integer idCliente);
+	Page<Compra> findNoQuitByClienteId(Pageable page, Integer idCliente);
+	Page<Compra> findQuitByClienteId(Pageable page, Integer idCliente);
 }

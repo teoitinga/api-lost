@@ -10,9 +10,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -97,7 +99,40 @@ public class DetalheCompraResource {
 		
 		return ResponseEntity.ok().body(response);
 	}
+	@PutMapping("/{id}")
+	public ResponseEntity<Response<DetalheCompraDto>> update(@PathVariable("id") Integer id, @RequestBody DetalheCompraDto compraDto){
+		
+		Response<DetalheCompraDto> response = new Response<DetalheCompraDto>();
+		
+		ModelMapper modelMapper = new ModelMapper();
 
+		//obtem registro do usuario informado pelo id
+		Detalhecompra cmp = this.detalheCompraService.findById(id);		
+		cmp = modelMapper.map(compraDto, Detalhecompra.class);
+		
+		cmp = this.detalheCompraService.save(cmp);
+		
+		DetalheCompraDto dto = modelMapper.map(cmp, DetalheCompraDto.class);
+		response.setData(dto);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Response<DetalheCompraDto>> delete(@PathVariable("id") Integer id){
+		Response<DetalheCompraDto> response = new Response<DetalheCompraDto>();
+		ModelMapper modelMapper = new ModelMapper();
+		
+		//obtem registro do usuario informado pelo id
+		Detalhecompra cmp = this.detalheCompraService.findById(id);
+		
+		DetalheCompraDto dto = modelMapper.map(cmp, DetalheCompraDto.class);
+		//deletando usuario especificado
+		this.detalheCompraService.delete(cmp);
+		
+		response.setData(dto);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(response);	
+	}
 	@PostMapping("/{idCliente}/{idCompra}")
 	public ResponseEntity<Response<CompraDto>> findItemById(@PathVariable("idCliente") Integer idCliente, 
 			@PathVariable("idCompra") Integer idCompra,

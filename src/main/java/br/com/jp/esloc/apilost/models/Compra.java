@@ -6,11 +6,12 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -43,14 +44,16 @@ public class Compra implements Serializable {
     private String entregueA;
     @Column(name = "entregue_por")
     private Integer entreguePor;
-    @Column(name = "fk_cliente")
+    //@Column(name = "fk_cliente")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_cliente")
     private Persona fkCliente;
     @Column(name = "acertado_em")
     @Temporal(TemporalType.TIMESTAMP)
     private Date acertadoEm;
-    @Column(name = "valor_compra", precision = 22)
+    @Column(name = "valor_compra")
     private Double valorCompra;
-    @Column(name = "debAtual", precision = 22)
+    @Column(name = "debAtual")
     private Double debAtual;
     
 }

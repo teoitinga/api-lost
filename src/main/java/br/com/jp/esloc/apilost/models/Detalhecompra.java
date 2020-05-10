@@ -31,7 +31,7 @@ public class Detalhecompra implements Serializable {
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
     private Integer id;
-    @Column(name = "FK_compra")
+    @Column(name = "fkcompra")
     private Integer fKcompra;
     @Column(name = "dsc", length = 255)
     private String dsc;
