@@ -1,25 +1,15 @@
 package br.com.jp.esloc.apilost.models;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,6 +18,30 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-public class Role {
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(exclude = "id")
+@EqualsAndHashCode(of = { "id" })
+@Data
+public class Role implements GrantedAuthority, Serializable {
 
+	private static final long serialVersionUID = 3262228163476170048L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Basic(optional = false)
+	@Column(name = "id", nullable = false)
+	@Getter
+	@Setter
+	private Integer id;
+	@Column(name = "role", length = 255)
+	@Getter
+	@Setter
+	private String permissao;
+	@Override
+	public String getAuthority() {
+		return this.permissao;
+	}
 }

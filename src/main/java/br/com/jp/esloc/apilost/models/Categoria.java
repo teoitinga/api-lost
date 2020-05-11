@@ -5,9 +5,9 @@ import org.springframework.security.core.GrantedAuthority;
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public enum Categoria implements GrantedAuthority {
-	ADMIN, 
-	CLIENT,
-	USER
+	ADMIN("ADMIN"), 
+	CLIENT("CLIENT"),
+	USER("USER");
 
 	private String categoria;
 
