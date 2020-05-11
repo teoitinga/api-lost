@@ -103,9 +103,12 @@ public class CompraResource {
 		cmp = modelMapper.map(compraDto, Compra.class);
 		
 		cmp = this.compraService.save(cmp);
-		
 		CompraDto dto = modelMapper.map(cmp, CompraDto.class);
 		response.setData(dto);
+		
+		if(cmp==null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
 		
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}

@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,9 +26,11 @@ import br.com.jp.esloc.apilost.domain.PersonaPostDto;
 import br.com.jp.esloc.apilost.models.Persona;
 import br.com.jp.esloc.apilost.responce.Response;
 import br.com.jp.esloc.apilost.services.PersonaService;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@Slf4j
 public class PersonaResource {
 	
 	@Autowired
@@ -88,6 +91,7 @@ public class PersonaResource {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
+	
 	@PutMapping("/{id}")
 	public ResponseEntity<Response<PersonaDto>> update(@PathVariable("id") Integer id, @RequestBody PersonaPostDto persona){
 		

@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Component;
 
+import br.com.jp.esloc.apilost.models.Categoria;
 import br.com.jp.esloc.apilost.models.Persona;
 import br.com.jp.esloc.apilost.services.PersonaService;
 
@@ -29,7 +30,7 @@ public class ApiLostApplication {
 		@Override
 		public void run(String... args) throws Exception {
 			//createPersonaIfNotExists();
-			
+
 		}
 		private void createPersonaIfNotExists() {
 			// criando registros para testar o sistema

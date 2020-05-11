@@ -42,4 +42,10 @@ public class PersonaServiceImpl implements PersonaService{
 		
 	}
 
+	@Override
+	public Persona findByLogin(String login) throws PersonaNotFound {
+//		public Persona findByLogin(String login) throws PersonaNotFound {
+		return this.personaRepository.findByLogin(Integer.parseInt(login));
+	}
+
 }

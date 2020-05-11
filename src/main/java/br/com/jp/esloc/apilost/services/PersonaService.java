@@ -10,8 +10,10 @@ public interface PersonaService {
 	
 	Persona save(Persona persona);
 	Persona findById(Integer idPersona) throws PersonaNotFound;
+	Persona findByLogin(String login) throws PersonaNotFound;
 	boolean isContaining();
 	Page<Persona> findAll(Pageable page);
 	void delete(Persona p);
+	
 	
 }

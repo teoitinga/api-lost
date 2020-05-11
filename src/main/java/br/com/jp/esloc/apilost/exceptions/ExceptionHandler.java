@@ -6,6 +6,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -40,6 +42,23 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler{
 
 		return new ResponseEntity<>(new ExceptionError("Recurso não encontrado"), HttpStatus.NOT_FOUND);
 
+	}
+	//AuthenticationException
+	@org.springframework.web.bind.annotation.ExceptionHandler({
+		AuthenticationException.class
+	})
+	protected ResponseEntity authenticationException() {
+		
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Error("User not found."));
+		
+	}
+	@org.springframework.web.bind.annotation.ExceptionHandler({
+		AccessDeniedException.class
+	})
+	protected ResponseEntity accessDeniedException() {
+		
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Error("Acesso negado."));
+		
 	}
 }
 class ExceptionError implements Serializable{
