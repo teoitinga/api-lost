@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		//user.setSenha(encoder.encode("123"));
 		//user = this.personaService.save(user);
 		
-			return user;// User.withUsername(username).password((user.getSenha())).roles("c").build();
+			return user;
 		
 	}
 }

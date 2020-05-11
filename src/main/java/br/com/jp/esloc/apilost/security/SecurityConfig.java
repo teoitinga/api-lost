@@ -23,22 +23,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
+		.csrf().disable()
 		.authorizeRequests()
-		.anyRequest().authenticated()
+			.antMatchers("/api/v1/users/**").hasRole("ADMIN")
+			.antMatchers("/userinfo/**").hasAnyRole("ADMIN", "USER")
+			.anyRequest().authenticated()
 		.and().formLogin()
 		.and().httpBasic()
-		.and().csrf()
-				.disable();
+		;
 	}
 	
+	/**
+	 *
+	 */
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		auth.userDetailsService(userDetailsService).passwordEncoder(encoder);
-		/*
-		 * auth. inMemoryAuthentication().passwordEncoder(encoder)
-		 * .withUser("user").password(encoder.encode("123")).roles("c") .and()
-		 * .withUser("admin").password(encoder.encode("123")).roles("c", "m");
-		 */
+		
+		  auth.userDetailsService(userDetailsService).passwordEncoder(encoder);
+		  
+			/*
+			 * auth. inMemoryAuthentication().passwordEncoder(encoder)
+			 * .withUser("user").password(encoder.encode("123")).roles("USER") .and()
+			 * .withUser("admin").password(encoder.encode("123")).roles("USER", "ADMIN");
+			 */	  
+			 		 
 	}
 }

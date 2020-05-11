@@ -3,6 +3,7 @@ package br.com.jp.esloc.apilost.services.impls;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.jp.esloc.apilost.exceptions.PersonaNotFound;
@@ -18,6 +19,8 @@ public class PersonaServiceImpl implements PersonaService{
 	
 	@Override
 	public Persona save(Persona persona) {
+		
+		//persona.setSenha(encoder.encode(persona.getSenha()));
 		return this.personaRepository.save(persona);
 	}
 

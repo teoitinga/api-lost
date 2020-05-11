@@ -4,15 +4,20 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
@@ -27,7 +32,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Getter
@@ -93,10 +97,17 @@ public class Persona implements UserDetails, Serializable {
 	@Setter
 	private String senha;
 	@Column(name = "categoria")
+	@Getter
+	@Setter
+	private String categoria;
 	@Enumerated(EnumType.STRING)
 	@Getter
 	@Setter
-	private Categoria categoria;
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "user_roles",
+		joinColumns = @JoinColumn(name="user_id", referencedColumnName = "id"),
+		inverseJoinColumns = @JoinColumn(name="role_id", referencedColumnName = "id"))
+	private List<Role> roles;
 	@Column(name = "debito", precision = 22)
 	@Getter
 	@Setter
@@ -116,7 +127,7 @@ public class Persona implements UserDetails, Serializable {
 		this.state = state;
 		this.ultAtualizacao = ultAtualizacao;
 		this.senha = senha;
-		this.categoria = Categoria.valueOf(categoria);
+		this.categoria = categoria;
 		this.debito = debito;
 	}
 
@@ -132,7 +143,7 @@ public class Persona implements UserDetails, Serializable {
 	}
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Arrays.asList(this.categoria);
+		return this.roles;
 	}
 
 	@Override

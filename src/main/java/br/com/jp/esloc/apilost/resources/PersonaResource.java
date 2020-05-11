@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +36,9 @@ public class PersonaResource {
 	
 	@Autowired
 	private PersonaService personaService;
-
+	
+	private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+	
 	@GetMapping()
 	public ResponseEntity<Response<Page<PersonaDto>>> findAll(@RequestParam(value="page", defaultValue = "0") Integer page,
 			@RequestParam(value="size", defaultValue = "5") Integer size) {
@@ -83,6 +86,8 @@ public class PersonaResource {
 		
 		ModelMapper modelMapper = new ModelMapper();
 		Persona p = modelMapper.map(persona, Persona.class);
+		
+		p.setSenha(encoder.encode(p.getSenha()));
 		
 		p = this.personaService.save(p);
 		
