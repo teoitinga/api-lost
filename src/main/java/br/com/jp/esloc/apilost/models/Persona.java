@@ -1,12 +1,11 @@
 package br.com.jp.esloc.apilost.models;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -44,66 +43,50 @@ import lombok.ToString;
 public class Persona implements UserDetails, Serializable {
 
 	private static final long serialVersionUID = -4586092888625020736L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
-	@Getter
-	@Setter
 	private Integer id;
+
 	@Column(name = "nome", length = 255)
 	@NotEmpty(message = "É necessário informar um nome para que possa ser registrado")
-	@Getter
-	@Setter
 	private String nome;
+	
 	@Column(name = "rg", length = 50)
-	@Getter
-	@Setter
 	private String rg;
+	
 	@Column(name = "apelido", length = 255)
-	@Getter
-	@Setter
 	private String apelido;
+	
 	@Column(name = "endereco", length = 255)
-	@Getter
-	@Setter
 	private String endereco;
+	
 	@Column(name = "fone", length = 255)
-	@Getter
-	@Setter
 	private String fone;
+	
 	@Column(name = "data_cadastro")
-	@Temporal(TemporalType.TIMESTAMP)
-	@Getter
-	@Setter
-	private Date dataCadastro;
+	private LocalDate dataCadastro;
+	
 	@Column(name = "usuario")
-	@Getter
-	@Setter
 	private Integer usuario;
+	
 	@Column(name = "prazo")
-	@Getter
-	@Setter
 	private Integer prazo;
+	
 	@Column(name = "state")
-	@Getter
-	@Setter
 	private Integer state;
+	
 	@Column(name = "ultAtualizacao")
-	@Temporal(TemporalType.TIMESTAMP)
-	@Getter
-	@Setter
-	private Date ultAtualizacao;
+	private LocalDate ultAtualizacao;
+	
 	@Column(name = "senha")
-	@Getter
-	@Setter
 	private String senha;
+	
 	@Column(name = "categoria")
-	@Getter
-	@Setter
 	private String categoria;
+
 	@Enumerated(EnumType.STRING)
-	@Getter
-	@Setter
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_roles",
 		joinColumns = @JoinColumn(name="user_id", referencedColumnName = "id"),
@@ -112,11 +95,11 @@ public class Persona implements UserDetails, Serializable {
 	@Column(name = "debito", precision = 22)
 	@Getter
 	@Setter
-	private Double debito;
+	private BigDecimal debito;
 
-	public Persona(String nome, String rg, String apelido, String endereco, String fone, Date dataCadastro,
-			Integer usuario, Integer prazo, Integer state, Date ultAtualizacao, String senha, String categoria,
-			Double debito) {
+	public Persona(String nome, String rg, String apelido, String endereco, String fone, LocalDate dataCadastro,
+			Integer usuario, Integer prazo, Integer state, LocalDate ultAtualizacao, String senha, String categoria,
+			BigDecimal debito) {
 		this.nome = nome;
 		this.rg = rg;
 		this.apelido = apelido;
@@ -184,11 +167,11 @@ public class Persona implements UserDetails, Serializable {
 
 	@PrePersist
 	private void setCadastro() {
-		this.dataCadastro = new Date();
+		this.dataCadastro = LocalDate.now();
 	}
 
 	@PreUpdate
 	private void setUpdate() {
-		this.ultAtualizacao = new Date();
+		this.ultAtualizacao = LocalDate.now();
 	}
 }

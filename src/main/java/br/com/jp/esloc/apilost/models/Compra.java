@@ -1,7 +1,10 @@
 package br.com.jp.esloc.apilost.models;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -12,8 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.OneToMany;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -37,23 +39,30 @@ public class Compra implements Serializable {
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
     private Integer id;
+    
     @Column(name = "data_compra")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dataCompra;
+    private LocalDate dataCompra;
+    
     @Column(name = "entregue_a", length = 255)
     private String entregueA;
+    
     @Column(name = "entregue_por")
     private Integer entreguePor;
+    
     //@Column(name = "fk_cliente")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_cliente")
     private Persona fkCliente;
+
     @Column(name = "acertado_em")
-    @Temporal(TemporalType.TIMESTAMP)
     private Date acertadoEm;
+
     @Column(name = "valor_compra")
-    private Double valorCompra;
-    @Column(name = "debAtual")
-    private Double debAtual;
+    private BigDecimal valorCompra;
     
+    @Column(name = "debAtual")
+    private BigDecimal debAtual;
+    
+    @OneToMany
+    private List<Detalhecompra> itens;
 }

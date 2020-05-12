@@ -1,5 +1,7 @@
 package br.com.jp.esloc.apilost.domain;
 
+import java.math.BigDecimal;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -17,9 +19,9 @@ public class ItensDto {
 
     private Integer id;
     private String dsc;
-    private Double vlunit;
-    private Double qtd;
-    private Double vltotal;
-    private Double desconto;
+    private BigDecimal vlunit;
+    private BigDecimal qtd;
+    private BigDecimal vltotal;
+    private BigDecimal desconto;
     
 }

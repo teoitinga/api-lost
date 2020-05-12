@@ -40,13 +40,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		
-		  auth.userDetailsService(userDetailsService).passwordEncoder(encoder);
+		  //auth.userDetailsService(userDetailsService).passwordEncoder(encoder);
 		  
-			/*
-			 * auth. inMemoryAuthentication().passwordEncoder(encoder)
-			 * .withUser("user").password(encoder.encode("123")).roles("USER") .and()
-			 * .withUser("admin").password(encoder.encode("123")).roles("USER", "ADMIN");
-			 */	  
+			
+			  auth. inMemoryAuthentication().passwordEncoder(encoder)
+			  .withUser("user").password(encoder.encode("123")).roles("USER") .and()
+			  .withUser("admin").password(encoder.encode("123")).roles("USER", "ADMIN");
+			 	  
 			 		 
 	}
 }

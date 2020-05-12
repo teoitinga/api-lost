@@ -17,16 +17,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-		Persona user = this.personaService.findByLogin(username);
-		if(user == null) {
-			throw new UsernameNotFoundException("User not found");	
-		}
-		//user.setSenha(encoder.encode("123"));
-		//user = this.personaService.save(user);
-		
-			return user;
-		
+		return null;
 	}
 }

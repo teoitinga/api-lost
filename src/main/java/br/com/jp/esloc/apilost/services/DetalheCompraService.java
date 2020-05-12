@@ -8,8 +8,9 @@ import br.com.jp.esloc.apilost.models.Detalhecompra;
 
 public interface DetalheCompraService {
 	Detalhecompra save(Detalhecompra item);
-	Detalhecompra findById(Integer idItem) throws ItemNotFound;
+	//Detalhecompra findById(Integer idItem) throws ItemNotFound;
 	boolean isContaining();
 	Page<Detalhecompra> findAll(Pageable page);
 	void delete(Detalhecompra item);
+	Detalhecompra findById(Integer idItem) throws ItemNotFound;
 }

@@ -1,9 +1,15 @@
 package br.com.jp.esloc.apilost.services.impls;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import br.com.jp.esloc.apilost.exceptions.PersonaNotFound;
@@ -30,8 +36,8 @@ public class PersonaServiceImpl implements PersonaService{
 	}
 
 	@Override
-	public Persona findById(Integer idPersona) throws PersonaNotFound {
-		return this.personaRepository.findById(idPersona).orElseThrow(()-> new PersonaNotFound("Cadastro não encontrado."));
+	public Optional<Persona> findById(Integer idPersona) throws PersonaNotFound {
+		return Optional.of(this.personaRepository.findById(idPersona).orElseThrow(()-> new PersonaNotFound("Cadastro não encontrado.")));
 	}
 
 	@Override
@@ -49,6 +55,39 @@ public class PersonaServiceImpl implements PersonaService{
 	public Persona findByLogin(String login) throws PersonaNotFound {
 //		public Persona findByLogin(String login) throws PersonaNotFound {
 		return this.personaRepository.findByLogin(Integer.parseInt(login));
+	}
+
+	public Page<Persona> search(
+            String searchTerm,
+            int page,
+            int size) {
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                size,
+                Sort.Direction.ASC,
+                "name");
+
+        return personaRepository.search(
+                searchTerm.toLowerCase(),
+                pageRequest);
+    }
+
+    public Page<Persona> findAll() {
+        int page = 0;
+        int size = 10;
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                size,
+                Sort.Direction.ASC,
+                "name");
+        return new PageImpl<>(
+        		personaRepository.findAll(), 
+                pageRequest, size);
+    }
+
+	@Override
+	public List<Persona> findAll(Example example) {
+		return (List<Persona>) this.personaRepository.findAll(example);
 	}
 
 }
