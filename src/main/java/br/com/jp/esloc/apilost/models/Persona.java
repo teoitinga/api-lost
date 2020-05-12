@@ -22,6 +22,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,12 +46,12 @@ public class Persona implements UserDetails, Serializable {
 	private static final long serialVersionUID = -4586092888625020736L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Basic(optional = false)
 	@Column(name = "id", nullable = false)
 	@Getter
 	@Setter
 	private Integer id;
 	@Column(name = "nome", length = 255)
+	@NotEmpty(message = "É necessário informar um nome para que possa ser registrado")
 	@Getter
 	@Setter
 	private String nome;

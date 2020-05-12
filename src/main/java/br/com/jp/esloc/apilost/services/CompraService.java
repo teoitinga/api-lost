@@ -7,7 +7,7 @@ import br.com.jp.esloc.apilost.exceptions.CompraNotFound;
 import br.com.jp.esloc.apilost.models.Compra;
 
 public interface CompraService {
-	Compra save(Compra compra);
+	Compra save(CompraDto compra);
 	Compra findById(Integer idCompra) throws CompraNotFound;
 	boolean isContaining();
 	Page<Compra> findAll(Pageable page);
