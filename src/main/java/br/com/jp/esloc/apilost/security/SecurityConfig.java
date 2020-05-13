@@ -28,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/api/v1/users/**").hasRole("ADMIN")
 			.antMatchers("/api/v1/compras/**").hasRole("ADMIN")
 			.antMatchers("/userinfo/**").hasAnyRole("ADMIN", "USER")
-			.anyRequest().authenticated()
+			.anyRequest().permitAll()
 		.and().formLogin()
 		.and().httpBasic()
 		;
@@ -40,14 +40,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		
-		  //auth.userDetailsService(userDetailsService).passwordEncoder(encoder);
-		  
-			
-			  auth. inMemoryAuthentication().passwordEncoder(encoder)
+		/*
+		 * auth.userDetailsService(userDetailsService);//.passwordEncoder(encoder.encode
+		 * 
+		 */
+			  auth.inMemoryAuthentication().passwordEncoder(encoder)
 			  .withUser("user").password(encoder.encode("123")).roles("USER") .and()
 			  .withUser("admin").password(encoder.encode("123")).roles("USER", "ADMIN");
-			 	  
+			 	  	  
 			 		 
 	}
 }

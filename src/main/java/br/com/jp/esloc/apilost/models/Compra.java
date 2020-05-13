@@ -2,7 +2,7 @@ package br.com.jp.esloc.apilost.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class Compra implements Serializable {
     private Integer id;
     
     @Column(name = "data_compra")
-    private LocalDate dataCompra;
+    private LocalDateTime dataCompra;
     
     @Column(name = "entregue_a", length = 255)
     private String entregueA;

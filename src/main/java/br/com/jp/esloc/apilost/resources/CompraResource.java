@@ -1,6 +1,7 @@
 package br.com.jp.esloc.apilost.resources;
 
-import org.modelmapper.ModelMapper;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import br.com.jp.esloc.apilost.domain.CompraDto;
+import br.com.jp.esloc.apilost.domain.CompraPostDto;
 import br.com.jp.esloc.apilost.domain.CompraResponseDto;
 import br.com.jp.esloc.apilost.models.Compra;
 import br.com.jp.esloc.apilost.repositories.PersonaRepository;
@@ -28,16 +29,31 @@ public class CompraResource {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public CompraResponseDto save(@RequestBody CompraDto compraDto) {
+	public CompraResponseDto save(@RequestBody CompraPostDto compraDto) {
 		CompraResponseDto compra = this.comprasService.save(compraDto);
 		return compra;//.getId();
 	}
 	@GetMapping("{id}")
 	public CompraResponseDto getById(@PathVariable Integer id) {
-		Compra dto = this.comprasService.findById(id)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Compra não encontrada."));
-		ModelMapper modelMapper = new ModelMapper();
-		CompraResponseDto Compradto = modelMapper.map(dto, CompraResponseDto.class);
-		return Compradto;
+		return this.comprasService.getCompra(id)
+				.map(c -> toResponseDto(c))
+				.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Não há registros desta compra."))
+				; 
+	}
+	@GetMapping("cliente/{id}")
+	public List<CompraResponseDto> getByClienteId(@PathVariable Integer id) {
+		return this.comprasService.getCompraPorCliente(id)
+				.map(c -> toListResponseDto(c))
+				.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Não há registros de compras para este cliente."))
+				; 
+	}
+	private CompraResponseDto toResponseDto(Compra c) {
+
+		return this.comprasService.toResponseDto(c);
+	}
+	
+	private List<CompraResponseDto> toListResponseDto(List<Compra> compras) {
+
+		return this.comprasService.toListResponseDto(compras);
 	}
 }

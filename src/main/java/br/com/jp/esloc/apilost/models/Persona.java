@@ -3,6 +3,7 @@ package br.com.jp.esloc.apilost.models;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,8 +20,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -78,7 +77,7 @@ public class Persona implements UserDetails, Serializable {
 	private Integer state;
 	
 	@Column(name = "ultAtualizacao")
-	private LocalDate ultAtualizacao;
+	private LocalDateTime ultAtualizacao;
 	
 	@Column(name = "senha")
 	private String senha;
@@ -98,7 +97,7 @@ public class Persona implements UserDetails, Serializable {
 	private BigDecimal debito;
 
 	public Persona(String nome, String rg, String apelido, String endereco, String fone, LocalDate dataCadastro,
-			Integer usuario, Integer prazo, Integer state, LocalDate ultAtualizacao, String senha, String categoria,
+			Integer usuario, Integer prazo, Integer state, LocalDateTime ultAtualizacao, String senha, String categoria,
 			BigDecimal debito) {
 		this.nome = nome;
 		this.rg = rg;
@@ -172,6 +171,6 @@ public class Persona implements UserDetails, Serializable {
 
 	@PreUpdate
 	private void setUpdate() {
-		this.ultAtualizacao = LocalDate.now();
+		this.ultAtualizacao = LocalDateTime.now();
 	}
 }

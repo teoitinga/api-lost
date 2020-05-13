@@ -11,7 +11,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Component;
 
-import br.com.jp.esloc.apilost.models.Categoria;
 import br.com.jp.esloc.apilost.models.Persona;
 import br.com.jp.esloc.apilost.services.PersonaService;
 
