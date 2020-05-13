@@ -21,7 +21,6 @@ public class ItensDto {
     private String dsc;
     private BigDecimal vlunit;
     private BigDecimal qtd;
-    private BigDecimal vltotal;
     private BigDecimal desconto;
     
 }

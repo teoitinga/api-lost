@@ -17,7 +17,7 @@ public class PersonaPostDto implements Serializable{
     @Getter @Setter private String apelido;
     @Getter @Setter private String endereco;
     @Getter @Setter private String fone;
-    @Getter @Setter private Integer usuario;
+    @Getter @Setter private Integer vendedor;
     @Getter @Setter private Integer prazo;
     @Getter @Setter private Integer state;
     @Getter @Setter private String senha;

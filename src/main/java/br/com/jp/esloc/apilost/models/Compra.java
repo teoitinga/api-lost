@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,24 +18,20 @@ import javax.persistence.OneToMany;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
 @ToString(exclude="id")
 @EqualsAndHashCode(of={"id"})
 @Data
 public class Compra implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
+	private static final long serialVersionUID = 4570415835162885090L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
     @Column(name = "id", nullable = false)
     private Integer id;
     
@@ -46,8 +41,10 @@ public class Compra implements Serializable {
     @Column(name = "entregue_a", length = 255)
     private String entregueA;
     
-    @Column(name = "entregue_por")
-    private Integer entreguePor;
+    //@Column(name = "entregue_por")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "entregue_por")
+    private Persona entreguePor;
     
     //@Column(name = "fk_cliente")
     @ManyToOne(fetch = FetchType.LAZY)
