@@ -25,4 +25,6 @@ public interface CompraService {
 	CompraResponseDto toResponseDto(Compra compra);
 	Optional<List<CompraResponseDto>> getCompraPorCliente(Integer id);
 	Optional<List<CompraResponseDto>> toListResponseDto(List<Compra> compras);
+	Optional<List<CompraResponseDto>> getCompraNaoQuitadasPorCliente(Integer id);
+	Optional<List<CompraResponseDto>> getCompraQuitadasPorCliente(Integer id);
 }

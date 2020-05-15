@@ -46,6 +46,18 @@ public class CompraResource {
 				.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Não há registros de compras para este cliente."))
 				; 
 	}
+	@GetMapping("cliente/noquit/{id}")
+	public List<CompraResponseDto> getByClienteIdNotQuit(@PathVariable Integer id) {
+		return this.comprasService.getCompraNaoQuitadasPorCliente(id)
+				.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Não há registros de compras para este cliente."))
+				; 
+	}
+	@GetMapping("cliente/quit/{id}")
+	public List<CompraResponseDto> getByClienteIdQuit(@PathVariable Integer id) {
+		return this.comprasService.getCompraQuitadasPorCliente(id)
+				.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Não há registros de compras para este cliente."))
+				; 
+	}
 	private CompraResponseDto toResponseDto(Compra c) {
 
 		return this.comprasService.toResponseDto(c);

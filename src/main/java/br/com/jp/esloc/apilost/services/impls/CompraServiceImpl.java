@@ -218,7 +218,17 @@ public class CompraServiceImpl implements CompraService{
 	@Override
 	public Optional<List<CompraResponseDto>> getCompraPorCliente(Integer id) {
 		System.out.println("Pesquisando comprar do Cliente: "+ id);
-		return toListResponseDto(this.compraRepository.findCompraByClienteId(id));
+		return toListResponseDto(this.compraRepository.findFetchItensByFkClienteId(id));
+	}
+	@Override
+	public Optional<List<CompraResponseDto>> getCompraNaoQuitadasPorCliente(Integer id) {
+		System.out.println("Pesquisando comprar do Cliente: "+ id);
+		return toListResponseDto(this.compraRepository.findFetchItensByFkClienteIdAndAcertadoEmNotNull(id));
+	}
+	@Override
+	public Optional<List<CompraResponseDto>> getCompraQuitadasPorCliente(Integer id) {
+		System.out.println("Pesquisando comprar do Cliente: "+ id);
+		return toListResponseDto(this.compraRepository.findFetchItensByFkClienteIdAndAcertadoEmNull(id));
 	}
 
 	@Override

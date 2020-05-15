@@ -22,6 +22,8 @@ public interface CompraRepository extends JpaRepository<Compra, Integer> {
 	Page<Compra> findQuitByUserId(Pageable page, @Param("fkUser") Integer fkUser);
 	@Query("Select c from Compra c join fetch c.itens where c.id = :id")
 	Optional<Compra> findByIdFetchItens(@Param("id") Integer id);
-	@Query("Select c from Compra c join fetch c.itens where c.fkCliente.id = :id")
-	List<Compra> findCompraByClienteId(@Param("id") Integer id);
+	List<Compra> findFetchItensByFkClienteId(@Param("id") Integer id);
+	List<Compra> findFetchItensByFkClienteIdAndAcertadoEmNotNull(@Param("id") Integer id);
+	List<Compra> findFetchItensByFkClienteIdAndAcertadoEmNull(@Param("id") Integer id);
+
 }

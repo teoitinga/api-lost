@@ -60,6 +60,6 @@ public class Compra implements Serializable {
     @Column(name = "debAtual")
     private BigDecimal debAtual;
     
-    @OneToMany
+    @OneToMany(mappedBy = "compra")
     private List<Detalhecompra> itens;
 }
