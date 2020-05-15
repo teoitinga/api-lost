@@ -43,7 +43,6 @@ public class CompraResource {
 	@GetMapping("cliente/{id}")
 	public List<CompraResponseDto> getByClienteId(@PathVariable Integer id) {
 		return this.comprasService.getCompraPorCliente(id)
-				.map(c -> toListResponseDto(c))
 				.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Não há registros de compras para este cliente."))
 				; 
 	}
@@ -52,8 +51,9 @@ public class CompraResource {
 		return this.comprasService.toResponseDto(c);
 	}
 	
-	private List<CompraResponseDto> toListResponseDto(List<Compra> compras) {
-
-		return this.comprasService.toListResponseDto(compras);
-	}
+	/*
+	 * private List<CompraResponseDto> toListrResponseDto(List<Compra> compras) {
+	 * 
+	 * return this.comprasService.toListResponseDto(compras); }
+	 */
 }

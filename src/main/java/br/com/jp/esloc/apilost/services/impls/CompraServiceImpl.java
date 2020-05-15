@@ -175,7 +175,8 @@ public class CompraServiceImpl implements CompraService{
 						.dsc(item.getDsc())
 						.vlunit(item.getVlunit())
 						.qtd(item.getQtd())
-						.desconto(item.getDesconto()).build()).collect(Collectors.toList());
+						.desconto(item.getDesconto())
+						.build()).collect(Collectors.toList());
 	}
 
 	private List<Detalhecompra> converterItens(Compra compra, List<ItensDto> itens) {
@@ -215,13 +216,23 @@ public class CompraServiceImpl implements CompraService{
 	}
 
 	@Override
-	public Optional<List<Compra>> getCompraPorCliente(Integer id) {
-		return this.compraRepository.findCompraByClienteId(id);
+	public Optional<List<CompraResponseDto>> getCompraPorCliente(Integer id) {
+		System.out.println("Pesquisando comprar do Cliente: "+ id);
+		return toListResponseDto(this.compraRepository.findCompraByClienteId(id));
 	}
 
 	@Override
-	public List<CompraResponseDto> toListResponseDto(List<Compra> compras) {
-		return this.getCompraPorCliente(comp)
+	public Optional<List<CompraResponseDto>> toListResponseDto(List<Compra> compras) {
+		return Optional.of(
+				compras.stream().map(compra->CompraResponseDto.builder()
+				.codigo(compra.getId())
+				.dataCompra(compra.getDataCompra())
+				.recebedor(compra.getEntregueA())
+				.vendedor(compra.getEntreguePor().getNome())
+				.clienteNome(compra.getFkCliente().getNome())
+				.valorCompra(compra.getValorCompra())
+				.itens(this.toDto(compra.getItens()))
+				.build()).collect(Collectors.toList()));
 	}
 
 }
