@@ -2,7 +2,10 @@ package br.com.jp.esloc.apilost.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,29 +28,48 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 		.csrf().disable()
 		.authorizeRequests()
-//			.antMatchers("/api/v1/users/**").hasRole("ADMIN")
-//			.antMatchers("/api/v1/compras/**").hasRole("ADMIN")
-//			.antMatchers("/userinfo/**").hasAnyRole("ADMIN", "USER")
-			.anyRequest().permitAll()
+				
+				  .antMatchers("/api/v1/users/**").hasRole("ADMIN")
+				//  .antMatchers("/api/v1/compras/**").hasRole("USER")
+				 
+			.anyRequest().authenticated()
 		.and().formLogin()
 		.and().httpBasic()
 		;
 	}
 	
-	/**
-	 *
-	 */
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Bean
+    DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(bCryptPasswordEncoder());
+        provider.setUserDetailsService(userDetailsService);
+        return provider;
+    }
+    
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		auth.authenticationProvider(authenticationProvider());
+		
 		/*
-		 * auth.userDetailsService(userDetailsService);//.passwordEncoder(encoder.encode
+		 * BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		 * 
-		 */
-			  auth.inMemoryAuthentication().passwordEncoder(encoder)
-			  .withUser("user").password(encoder.encode("123")).roles("USER") .and()
-			  .withUser("admin").password(encoder.encode("123")).roles("USER", "ADMIN");
-			 	  	  
+		 * auth.userDetailsService(userDetailsService);//.passwordEncoder(encoder.encode
+		 */		  
+		/*
+		 * auth.inMemoryAuthentication().passwordEncoder(encoder)
+		 * .withUser("user").password(encoder.encode("123")).roles("USER") .and()
+		 * .withUser("admin").password(encoder.encode("123")).roles("USER", "ADMIN");
+		 */	 	  	  
 			 		 
 	}
 }

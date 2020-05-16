@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import br.com.jp.esloc.apilost.models.Persona;
 
 public interface PersonaRepository extends JpaRepository<Persona, Integer>{
-	@Query("select p from Persona p where (p.id = :login) AND (NOT p.categoria='c')")
+	@Query("select p from Persona p where (p.id = :login)")
 	Persona findByLogin( @Param("login") Integer login );
 
 	@Query("select p from Persona p")
