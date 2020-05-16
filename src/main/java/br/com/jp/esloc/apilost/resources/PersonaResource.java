@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.com.jp.esloc.apilost.models.Persona;
+import br.com.jp.esloc.apilost.services.CompraService;
 import br.com.jp.esloc.apilost.services.PersonaService;
 
 @RestController
@@ -28,6 +29,8 @@ public class PersonaResource {
 	
 	@Autowired
 	private PersonaService personaService;
+	@Autowired
+	private CompraService compraService;
 	
 	@GetMapping("{id}")
 	public Persona getById(@PathVariable Integer id) {
@@ -73,6 +76,17 @@ public class PersonaResource {
 				usuarioExistente -> {
 					user.setId(usuarioExistente.getId());
 					this.personaService.save(user);
+					return usuarioExistente;
+				}
+				).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
+	}
+	@PutMapping("pay/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void payDebito(@PathVariable Integer id) {
+		
+		this.personaService.findById(id).map(
+				usuarioExistente -> {
+					this.compraService.zerarDebitoDoCliente(id);
 					return usuarioExistente;
 				}
 				).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));

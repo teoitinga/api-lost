@@ -14,10 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import br.com.jp.esloc.apilost.domain.CompraNoQuitResponseDto;
 import br.com.jp.esloc.apilost.domain.CompraPostDto;
 import br.com.jp.esloc.apilost.domain.CompraResponseDto;
 import br.com.jp.esloc.apilost.domain.ItensDto;
+import br.com.jp.esloc.apilost.domain.UpdatePagamentoDeContaDto;
 import br.com.jp.esloc.apilost.exceptions.CompraNotFound;
+import br.com.jp.esloc.apilost.exceptions.PersonaNotFound;
 import br.com.jp.esloc.apilost.exceptions.RegraNegocioException;
 import br.com.jp.esloc.apilost.models.Compra;
 import br.com.jp.esloc.apilost.models.Detalhecompra;
@@ -218,23 +221,17 @@ public class CompraServiceImpl implements CompraService{
 	@Override
 	public Optional<List<CompraResponseDto>> getCompraPorCliente(Integer id) {
 		System.out.println("Pesquisando comprar do Cliente: "+ id);
-		return toListResponseDto(this.compraRepository.findFetchItensByFkClienteId(id));
+		return toListResponseDto(this.compraRepository
+				.findFetchItensByFkClienteIdOrderByDataCompraDesc(id));
 	}
 	@Override
-	public Optional<List<CompraResponseDto>> getCompraNaoQuitadasPorCliente(Integer id) {
-		System.out.println("Pesquisando comprar do Cliente: "+ id);
-		return toListResponseDto(this.compraRepository.findFetchItensByFkClienteIdAndAcertadoEmNotNull(id));
+	public Optional<List<CompraNoQuitResponseDto>> getComprasNaoQuitadasPorCliente(Integer id) {
+		return toListResponseQuitDto(this.compraRepository
+				.findFetchItensByFkClienteIdAndAcertadoEmNullOrderByDataCompraDesc(id));
 	}
-	@Override
-	public Optional<List<CompraResponseDto>> getCompraQuitadasPorCliente(Integer id) {
-		System.out.println("Pesquisando comprar do Cliente: "+ id);
-		return toListResponseDto(this.compraRepository.findFetchItensByFkClienteIdAndAcertadoEmNull(id));
-	}
-
-	@Override
-	public Optional<List<CompraResponseDto>> toListResponseDto(List<Compra> compras) {
+	private Optional<List<CompraNoQuitResponseDto>> toListResponseQuitDto(List<Compra> compras) {
 		return Optional.of(
-				compras.stream().map(compra->CompraResponseDto.builder()
+				compras.stream().map(compra->CompraNoQuitResponseDto.builder()
 				.codigo(compra.getId())
 				.dataCompra(compra.getDataCompra())
 				.recebedor(compra.getEntregueA())
@@ -243,6 +240,55 @@ public class CompraServiceImpl implements CompraService{
 				.valorCompra(compra.getValorCompra())
 				.itens(this.toDto(compra.getItens()))
 				.build()).collect(Collectors.toList()));
+	}
+
+	@Override
+	public Optional<List<CompraResponseDto>> getComprasQuitadasPorCliente(Integer id) {
+		System.out.println("Pesquisando comprar do Cliente: "+ id);
+		return toListResponseDto(this.compraRepository
+				.findFetchItensByFkClienteIdAndAcertadoEmNotNullOrderByDataCompraDesc(id));
+	}
+
+	@Override
+	public Optional<List<CompraResponseDto>> toListResponseDto(List<Compra> compras) {
+		return Optional.of(
+				compras.stream().map(compra->CompraResponseDto.builder()
+				.codigo(compra.getId())
+				.dataCompra(compra.getDataCompra())
+				.dataPagamento(compra.getAcertadoEm())
+				.recebedor(compra.getEntregueA())
+				.vendedor(compra.getEntreguePor().getNome())
+				.clienteNome(compra.getFkCliente().getNome())
+				.valorCompra(compra.getValorCompra())
+				.itens(this.toDto(compra.getItens()))
+				.build()).collect(Collectors.toList()));
+	}
+
+	@Override
+	public void updatePagamento(Integer id, UpdatePagamentoDeContaDto dto) {
+		this.compraRepository.findById(id).map(compra -> {
+			compra.setAcertadoEm(LocalDateTime.now());
+			return this.compraRepository.save(compra);
+		}).orElseThrow(()-> new CompraNotFound());
+	}
+
+	@Override
+	public void zerarDebitoDoCliente(Integer idCliente) {
+		LocalDateTime dataAtualização = LocalDateTime.now();
+		
+		Persona cliente = this.personaRepository.findById(idCliente)
+				.orElseThrow(()-> new PersonaNotFound("Cliente não encontrado nos registros."));
+		this.compraRepository.registrarPagamentoDeComprasEmAberto(dataAtualização, cliente.getId());
+		
+		cliente.setDebito(BigDecimal.ZERO);
+		cliente.setUltAtualizacao(dataAtualização);
+		this.personaRepository.save(cliente);
+	}
+
+	@Override
+	public void registrarHaverParaCliente(Integer idCliente) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

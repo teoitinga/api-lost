@@ -18,12 +18,11 @@ import lombok.ToString;
 @EqualsAndHashCode(of = { "id" })
 @Data
 @Builder
-public class CompraResponseDto implements Serializable {
+public class CompraNoQuitResponseDto implements Serializable {
 
-	private static final long serialVersionUID = -4832223015919582035L;
+	private static final long serialVersionUID = -7249043440450222943L;
 	private Integer codigo;
 	private LocalDateTime dataCompra;
-	private LocalDateTime dataPagamento;
 	private String recebedor;
 	private String vendedor;
 	private String clienteNome;

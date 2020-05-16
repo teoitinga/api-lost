@@ -6,8 +6,10 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import br.com.jp.esloc.apilost.domain.CompraNoQuitResponseDto;
 import br.com.jp.esloc.apilost.domain.CompraPostDto;
 import br.com.jp.esloc.apilost.domain.CompraResponseDto;
+import br.com.jp.esloc.apilost.domain.UpdatePagamentoDeContaDto;
 import br.com.jp.esloc.apilost.models.Compra;
 
 public interface CompraService {
@@ -25,6 +27,9 @@ public interface CompraService {
 	CompraResponseDto toResponseDto(Compra compra);
 	Optional<List<CompraResponseDto>> getCompraPorCliente(Integer id);
 	Optional<List<CompraResponseDto>> toListResponseDto(List<Compra> compras);
-	Optional<List<CompraResponseDto>> getCompraNaoQuitadasPorCliente(Integer id);
-	Optional<List<CompraResponseDto>> getCompraQuitadasPorCliente(Integer id);
+	Optional<List<CompraNoQuitResponseDto>> getComprasNaoQuitadasPorCliente(Integer id);
+	Optional<List<CompraResponseDto>> getComprasQuitadasPorCliente(Integer id);
+	void updatePagamento(Integer id, UpdatePagamentoDeContaDto dto);
+	void zerarDebitoDoCliente(Integer idCliente);
+	void registrarHaverParaCliente(Integer idCliente);
 }

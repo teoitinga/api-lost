@@ -4,4 +4,8 @@ public class CompraNotFound extends RuntimeException {
 
 	private static final long serialVersionUID = 3378988467640914528L;
 
+	public CompraNotFound() {
+		super("Compra não encontrada. ");
+	}
+
 }

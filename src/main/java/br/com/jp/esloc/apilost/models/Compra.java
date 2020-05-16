@@ -3,7 +3,6 @@ package br.com.jp.esloc.apilost.models;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -52,7 +51,7 @@ public class Compra implements Serializable {
     private Persona fkCliente;
 
     @Column(name = "acertado_em")
-    private Date acertadoEm;
+    private LocalDateTime acertadoEm;
 
     @Column(name = "valor_compra")
     private BigDecimal valorCompra;
