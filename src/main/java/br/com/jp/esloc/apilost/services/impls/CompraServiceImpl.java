@@ -220,7 +220,6 @@ public class CompraServiceImpl implements CompraService{
 
 	@Override
 	public Optional<List<CompraResponseDto>> getCompraPorCliente(Integer id) {
-		System.out.println("Pesquisando comprar do Cliente: "+ id);
 		return toListResponseDto(this.compraRepository
 				.findFetchItensByFkClienteIdOrderByDataCompraDesc(id));
 	}
@@ -271,7 +270,7 @@ public class CompraServiceImpl implements CompraService{
 			return this.compraRepository.save(compra);
 		}).orElseThrow(()-> new CompraNotFound());
 	}
-
+	@Transactional
 	@Override
 	public void zerarDebitoDoCliente(Integer idCliente) {
 		LocalDateTime dataAtualização = LocalDateTime.now();

@@ -18,6 +18,7 @@ import br.com.jp.esloc.apilost.domain.CompraNoQuitResponseDto;
 import br.com.jp.esloc.apilost.domain.CompraPostDto;
 import br.com.jp.esloc.apilost.domain.CompraResponseDto;
 import br.com.jp.esloc.apilost.domain.UpdatePagamentoDeContaDto;
+import br.com.jp.esloc.apilost.exceptions.RegraNegocioException;
 import br.com.jp.esloc.apilost.models.Compra;
 import br.com.jp.esloc.apilost.repositories.PersonaRepository;
 import br.com.jp.esloc.apilost.services.CompraService;
@@ -46,8 +47,16 @@ public class CompraResource {
 	@GetMapping("cliente/{id}")
 	public List<CompraResponseDto> getByClienteId(@PathVariable Integer id) {
 		return this.comprasService.getCompraPorCliente(id)
-				.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Não há registros de compras para este cliente."))
+				.map(compra -> verificaCompras(compra))
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Não há registros de compras para este cliente."))
 				; 
+	}
+	private List<CompraResponseDto> verificaCompras(List<CompraResponseDto> compra) {
+		//Dispara erro caso não haja itens na lista de compra
+		if(compra.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Não há registros de compras para este cliente.");
+		}
+		return compra;
 	}
 	@PatchMapping("{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
