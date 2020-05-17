@@ -9,13 +9,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import br.com.jp.esloc.apilost.security.jwt.JwtFilter;
+import br.com.jp.esloc.apilost.security.jwt.JwtAuthFilter;
 import br.com.jp.esloc.apilost.security.jwt.JwtService;
 
 @EnableWebSecurity
@@ -24,7 +23,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	@Qualifier("userDetailsServiceImpl")
-	private UserDetailsService userDetailsService;
+	private UserDetailsServiceImpl userDetailsService;
+	
 	@Autowired
 	private JwtService jwtService;
 	
@@ -34,19 +34,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.csrf().disable()
 		.authorizeRequests()
 				
-				  .antMatchers("/api/v1/users/**").hasAuthority("ADMIN")
-				  .antMatchers("/api/v1/compras/**").hasAuthority("USER")
+				  .antMatchers("/api/v1/users/auth/**").permitAll()
+				  .antMatchers("/api/v1/users/**").hasAnyAuthority( "ADMIN", "USER")
+				  .antMatchers("/api/v1/compras/**").hasAnyAuthority( "ADMIN", "USER")
 				 
 			.anyRequest().authenticated()
 		.and()
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-		.and().addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		.and()
+			.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 		;
 	}
+	
 	@Bean
 	public OncePerRequestFilter jwtFilter() {
-		return new JwtFilter(jwtService, userDetailsService);
+		return new JwtAuthFilter(this.jwtService, this.userDetailsService);
 	}
+	
     @Bean
     public PasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -54,17 +58,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		PasswordEncoder encoder = bCryptPasswordEncoder();
-		
-		//  BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		  
-		  auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());//.passwordEncoder(encoder.encode
-		 		  
-			/*
-			 * auth.inMemoryAuthentication().passwordEncoder(encoder)
-			 * .withUser("user").password(encoder.encode("123")).roles("USER") .and()
-			 * .withUser("admin").password(encoder.encode("123")).roles("USER", "ADMIN");
-			 */ 	 	  	  
+  
+		  auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+	 	  	  
 			 		 
 	}
 }

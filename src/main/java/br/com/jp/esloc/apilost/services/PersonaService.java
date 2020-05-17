@@ -17,8 +17,6 @@ import br.com.jp.esloc.apilost.models.Persona;
 public interface PersonaService {
 	
 	Persona save(Persona persona);
-	//Persona findById(Integer idPersona) throws PersonaNotFound;
-	//Persona findByLogin(String login) throws PersonaNotFound;
 	boolean isContaining();
 	Page<Persona> findAll(Pageable page);
 	Page<Persona> findAll();
@@ -28,6 +26,5 @@ public interface PersonaService {
 	List<Persona> findAll(Example example);
 	Persona create(@Valid ClientePostDto cliente);
 	PersonaDto create(Persona persona);
-	
 	
 }

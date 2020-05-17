@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.com.jp.esloc.apilost.exceptions.PasswordInValidException;
 import br.com.jp.esloc.apilost.exceptions.PersonaNotFound;
 import br.com.jp.esloc.apilost.models.Persona;
 import br.com.jp.esloc.apilost.services.PersonaService;
@@ -23,5 +24,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		return this.personaService.findByLogin(username)
 				.orElseThrow(()->new PersonaNotFound("Usuario não encontrado."));
 
+	}
+	
+	public Persona autenticar(Persona usuario) {
+		Persona user = loadUserByUsername(String.valueOf(usuario.getId()));
+		boolean passwordOk = bCryptPasswordEncoder.matches(usuario.getSenha(), user.getPassword());
+		if(passwordOk) {
+			return user;
+		}else {
+			throw new PasswordInValidException();
+		}
 	}
 }

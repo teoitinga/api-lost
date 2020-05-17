@@ -6,11 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
-import br.com.jp.esloc.ApiLostApplication;
 import br.com.jp.esloc.apilost.models.Persona;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -23,6 +20,7 @@ public class JwtService {
 	
 	@Value("${securityjwt.expiracao}")
 	private String expiracao;
+	
 	@Value("${securityjwt.chave-assinatura}")
 	private String chaveAssinatura;
 	
