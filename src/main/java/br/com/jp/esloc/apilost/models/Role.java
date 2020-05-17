@@ -13,14 +13,10 @@ import org.springframework.security.core.GrantedAuthority;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
 @ToString(exclude = "id")
 @EqualsAndHashCode(of = { "id" })
@@ -33,12 +29,8 @@ public class Role implements GrantedAuthority, Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Basic(optional = false)
 	@Column(name = "id", nullable = false)
-	@Getter
-	@Setter
 	private Integer id;
 	@Column(name = "role", length = 255)
-	@Getter
-	@Setter
 	private String permissao;
 	@Override
 	public String getAuthority() {

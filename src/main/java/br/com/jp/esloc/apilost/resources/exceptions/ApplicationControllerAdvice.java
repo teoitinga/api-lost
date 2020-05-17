@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import br.com.jp.esloc.apilost.exceptions.CompraNotFound;
+import br.com.jp.esloc.apilost.exceptions.PersonaNotFound;
 import br.com.jp.esloc.apilost.exceptions.RegraNegocioException;
 
 @RestControllerAdvice
@@ -19,6 +20,11 @@ public class ApplicationControllerAdvice {
 	@ExceptionHandler(CompraNotFound.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ApiErrors handleCompraNotFoundException(CompraNotFound ex) {
+		return new ApiErrors(ex.getMessage());
+	}
+	@ExceptionHandler(PersonaNotFound.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ApiErrors handlePersonaNotFoundException(PersonaNotFound ex) {
 		return new ApiErrors(ex.getMessage());
 	}
 	

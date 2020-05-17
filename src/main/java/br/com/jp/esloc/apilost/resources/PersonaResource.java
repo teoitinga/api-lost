@@ -1,6 +1,9 @@
 package br.com.jp.esloc.apilost.resources;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -19,9 +22,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import br.com.jp.esloc.apilost.domain.ClientePostDto;
+import br.com.jp.esloc.apilost.domain.PersonaDto;
 import br.com.jp.esloc.apilost.models.Persona;
 import br.com.jp.esloc.apilost.services.CompraService;
 import br.com.jp.esloc.apilost.services.PersonaService;
+import lombok.Getter;
+import lombok.Setter;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -69,7 +76,7 @@ public class PersonaResource {
 
 	@PutMapping("{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void update(@PathVariable Integer id, 
+	public void update(@PathVariable @Valid Integer id, 
 			@RequestBody Persona user) {
 		
 		this.personaService.findById(id).map(
@@ -91,9 +98,42 @@ public class PersonaResource {
 				}
 				).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
 	}
-	@PostMapping
+
+	/*
+	 * @Getter @Setter private Integer id;
+	 * 
+	 * @Getter @Setter private String nome;
+	 * 
+	 * @Getter @Setter private String rg;
+	 * 
+	 * @Getter @Setter private String apelido;
+	 * 
+	 * @Getter @Setter private String endereco;
+	 * 
+	 * @Getter @Setter private String fone;
+	 * 
+	 * @Getter @Setter private LocalDateTime dataCadastro;
+	 * 
+	 * @Getter @Setter private Integer usuario;
+	 * 
+	 * @Getter @Setter private Integer prazo;
+	 * 
+	 * @Getter @Setter private Integer state;
+	 * 
+	 * @Getter @Setter private LocalDateTime ultAtualizacao;
+	 * 
+	 * @Getter @Setter private String senha;
+	 * 
+	 * @Getter @Setter private String categoria;
+	 * 
+	 * @Getter @Setter private Double debito;
+	 */
+	@PostMapping("cliente")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Persona save(@RequestBody Persona cliente) {
-		return this.personaService.save(cliente);
+	public PersonaDto save(@RequestBody @Valid ClientePostDto cliente) {
+
+		Persona persona = this.personaService.create(cliente);
+		return this.personaService.create(this.personaService.save(persona));
+		
 	}
 }

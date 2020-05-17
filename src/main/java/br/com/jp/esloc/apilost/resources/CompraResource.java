@@ -18,7 +18,6 @@ import br.com.jp.esloc.apilost.domain.CompraNoQuitResponseDto;
 import br.com.jp.esloc.apilost.domain.CompraPostDto;
 import br.com.jp.esloc.apilost.domain.CompraResponseDto;
 import br.com.jp.esloc.apilost.domain.UpdatePagamentoDeContaDto;
-import br.com.jp.esloc.apilost.exceptions.RegraNegocioException;
 import br.com.jp.esloc.apilost.models.Compra;
 import br.com.jp.esloc.apilost.repositories.PersonaRepository;
 import br.com.jp.esloc.apilost.services.CompraService;

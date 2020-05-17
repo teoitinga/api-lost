@@ -20,11 +20,15 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import br.com.jp.esloc.apilost.domain.ClientePostDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,12 +37,12 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
 @ToString(exclude = "id")
 @EqualsAndHashCode(of = { "id" })
 @Data
+@Builder
+@AllArgsConstructor
 public class Persona implements UserDetails, Serializable {
 
 	private static final long serialVersionUID = -4586092888625020736L;
@@ -160,7 +164,6 @@ public class Persona implements UserDetails, Serializable {
 
 	@Override
 	public boolean isEnabled() {
-
 		return !false;
 	}
 
@@ -173,4 +176,5 @@ public class Persona implements UserDetails, Serializable {
 	private void setUpdate() {
 		this.ultAtualizacao = LocalDateTime.now();
 	}
+
 }
