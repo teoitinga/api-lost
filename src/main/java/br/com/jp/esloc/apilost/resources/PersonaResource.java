@@ -33,9 +33,15 @@ import br.com.jp.esloc.apilost.security.UserDetailsServiceImpl;
 import br.com.jp.esloc.apilost.security.jwt.JwtService;
 import br.com.jp.esloc.apilost.services.CompraService;
 import br.com.jp.esloc.apilost.services.PersonaService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@Api("Api Cliente e usuarios")
 public class PersonaResource {
 
 	@Autowired
@@ -56,6 +62,11 @@ public class PersonaResource {
 	 */
 	
 	@GetMapping("{id}")
+	@ApiOperation("Obter detalhes de cliente ou usuario por ID")
+	@ApiResponses({
+		@ApiResponse(code=200, message="Cliente encontrado."),
+		@ApiResponse(code=404, message="Cliente não encontrado para o ID informado.")
+	})
 	public Persona getById(@PathVariable Integer id) {
 		return this.personaService.findById(id)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
@@ -63,7 +74,11 @@ public class PersonaResource {
 
 	@DeleteMapping("{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void delete(@PathVariable Integer id) {
+	@ApiResponses({
+		@ApiResponse(code=204, message="Cliente deletado."),
+		@ApiResponse(code=404, message="Cliente não encontrado para o ID informado.")
+	})
+	public void delete(@PathVariable @ApiParam("ID do cliente") Integer id) {
 		this.personaService.findById(id)
 		.map(
 				usuarioExistente -> {
@@ -92,7 +107,7 @@ public class PersonaResource {
 
 	@PutMapping("{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void update(@PathVariable @Valid Integer id, 
+	public void update(@PathVariable @ApiParam("ID do cliente") @Valid Integer id, 
 			@RequestBody Persona user) {
 		
 		this.personaService.findById(id).map(
@@ -105,7 +120,7 @@ public class PersonaResource {
 	}
 	@PutMapping("pay/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void payDebito(@PathVariable Integer id) {
+	public void payDebito(@PathVariable @ApiParam("ID do cliente") Integer id) {
 		
 		this.personaService.findById(id).map(
 				usuarioExistente -> {
@@ -118,14 +133,19 @@ public class PersonaResource {
 
 	@PostMapping("cliente")
 	@ResponseStatus(HttpStatus.CREATED)
-	public PersonaDto save(@RequestBody @Valid ClientePostDto cliente) {
+	@ApiOperation("Salva registro de clientes")
+	@ApiResponses({
+		@ApiResponse(code=201, message="Cliente registrado com sucesso."),
+		@ApiResponse(code=400, message="Erro ao registrar dados do cliente.")
+	})
+	public PersonaDto save(@RequestBody @Valid @ApiParam("JSON do cliente") ClientePostDto cliente) {
 
 		Persona persona = this.personaService.create(cliente);
 		return this.personaService.create(this.personaService.save(persona));
 		
 	}
 	@PostMapping("auth")
-	public TokenDto autenticar(@RequestBody CredenciaisDto credenciais) {
+	public TokenDto autenticar(@RequestBody @ApiParam("JSON do usuario") CredenciaisDto credenciais) {
 		System.out.println("Usuario:" + credenciais.getLogin());
 		System.out.println("senha informada:" + credenciais.getSenha());
 		try {

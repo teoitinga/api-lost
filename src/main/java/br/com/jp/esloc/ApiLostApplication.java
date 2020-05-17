@@ -9,13 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.stereotype.Component;
 
 import br.com.jp.esloc.apilost.models.Persona;
 import br.com.jp.esloc.apilost.services.PersonaService;
 
 @SpringBootApplication
-public class ApiLostApplication {
+public class ApiLostApplication extends SpringBootServletInitializer {
+	
 	private static final Logger log = LoggerFactory.getLogger(ApiLostApplication.class);
 	
 	@Autowired

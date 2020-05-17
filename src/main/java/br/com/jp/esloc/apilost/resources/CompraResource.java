@@ -19,7 +19,6 @@ import br.com.jp.esloc.apilost.domain.CompraPostDto;
 import br.com.jp.esloc.apilost.domain.CompraResponseDto;
 import br.com.jp.esloc.apilost.domain.UpdatePagamentoDeContaDto;
 import br.com.jp.esloc.apilost.models.Compra;
-import br.com.jp.esloc.apilost.repositories.PersonaRepository;
 import br.com.jp.esloc.apilost.services.CompraService;
 
 @RestController
@@ -27,8 +26,6 @@ import br.com.jp.esloc.apilost.services.CompraService;
 public class CompraResource {
 	@Autowired
 	private CompraService comprasService;
-	@Autowired
-	private PersonaRepository personaRepository;
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -79,10 +76,5 @@ public class CompraResource {
 
 		return this.comprasService.toResponseDto(c);
 	}
-	
-	/*
-	 * private List<CompraResponseDto> toListrResponseDto(List<Compra> compras) {
-	 * 
-	 * return this.comprasService.toListResponseDto(compras); }
-	 */
+
 }
