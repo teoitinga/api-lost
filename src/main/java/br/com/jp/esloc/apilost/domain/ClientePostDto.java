@@ -2,6 +2,8 @@ package br.com.jp.esloc.apilost.domain;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotBlank;
+
 import org.modelmapper.ModelMapper;
 
 import br.com.jp.esloc.apilost.models.Persona;
@@ -17,6 +19,7 @@ public class ClientePostDto implements Serializable {
 	private static final long serialVersionUID = 6489501381487196479L;
 
 	private Integer id;
+	@NotBlank(message = "{name.not.blank}")
 	private String nome;
 	private String rg;
 	private String apelido;

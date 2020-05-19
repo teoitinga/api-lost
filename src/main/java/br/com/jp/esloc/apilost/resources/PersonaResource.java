@@ -11,6 +11,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +28,8 @@ import br.com.jp.esloc.apilost.domain.CredenciaisDto;
 import br.com.jp.esloc.apilost.domain.PersonaDto;
 import br.com.jp.esloc.apilost.domain.TokenDto;
 import br.com.jp.esloc.apilost.exceptions.PasswordInValidException;
-import br.com.jp.esloc.apilost.exceptions.PersonaNotFound;
+import br.com.jp.esloc.apilost.exceptions.PersonaNotFoundException;
+import br.com.jp.esloc.apilost.exceptions.UserNotAutenticatedException;
 import br.com.jp.esloc.apilost.models.Persona;
 import br.com.jp.esloc.apilost.security.UserDetailsServiceImpl;
 import br.com.jp.esloc.apilost.security.jwt.JwtService;
@@ -42,6 +44,7 @@ import io.swagger.annotations.ApiResponses;
 @RestController
 @RequestMapping("/api/v1/users")
 @Api("Api Cliente e usuarios")
+@CrossOrigin
 public class PersonaResource {
 
 	@Autowired
@@ -49,123 +52,93 @@ public class PersonaResource {
 
 	@Autowired
 	@Qualifier("userDetailsServiceImpl")
-	private UserDetailsServiceImpl userDetailsService;	
-	
+	private UserDetailsServiceImpl userDetailsService;
+
 	@Autowired
 	private PersonaService personaService;
-	
+
 	@Autowired
 	private CompraService compraService;
-	
-	/*
-	 * @Autowired private final JwtService jwtService;
-	 */
-	
+
 	@GetMapping("{id}")
 	@ApiOperation("Obter detalhes de cliente ou usuario por ID")
-	@ApiResponses({
-		@ApiResponse(code=200, message="Cliente encontrado."),
-		@ApiResponse(code=404, message="Cliente não encontrado para o ID informado.")
-	})
+	@ApiResponses({ @ApiResponse(code = 200, message = "Cliente encontrado."),
+			@ApiResponse(code = 404, message = "Cliente não encontrado para o ID informado.") })
 	public Persona getById(@PathVariable Integer id) {
 		return this.personaService.findById(id)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado para o ID informado."));
 	}
 
 	@DeleteMapping("{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@ApiResponses({
-		@ApiResponse(code=204, message="Cliente deletado."),
-		@ApiResponse(code=404, message="Cliente não encontrado para o ID informado.")
-	})
+	@ApiOperation("Apaga registro de cliente especificado por ID")
+	@ApiResponses({ @ApiResponse(code = 204, message = "Cliente deletado."),
+			@ApiResponse(code = 404, message = "Cliente não encontrado para o ID informado.") })
 	public void delete(@PathVariable @ApiParam("ID do cliente") Integer id) {
-		this.personaService.findById(id)
-		.map(
-				usuarioExistente -> {
-					this.personaService.delete(usuarioExistente);
-					return usuarioExistente;
-				}
-				)		
-		.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
+		this.personaService.findById(id).map(usuarioExistente -> {
+			this.personaService.delete(usuarioExistente);
+			return usuarioExistente;
+		}).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado para o ID informado."));
 
 	}
+
 	@GetMapping
-    public Page<Persona> getAll() {
-        return personaService.findAll();
-    }
+	@ResponseStatus(HttpStatus.OK)
+	@ApiOperation("Obtem registro de todos os clientes")
+	@ApiResponses({ @ApiResponse(code = 200, message = "Lista de clientes obtidos com sucessoCliente "),
+			@ApiResponse(code = 404, message = "Não foi possível obter uma lista de clientes.") })
+	public Page<Persona> getAll() {
+		return personaService.findAll();
+	}
+
 	@GetMapping("/filter")
+	@ApiOperation("Aplica filtro em dados dos cliente")
+	@ApiResponses({ @ApiResponse(code = 201, message = "Clientes encontrados."),
+			@ApiResponse(code = 400, message = "Não foi possível encontrar o cliente especificado.") })
 	public List<Persona> find(Persona filtro) {
-		ExampleMatcher matcher = ExampleMatcher
-									.matching()
-									.withIgnoreCase()
-									.withStringMatcher(StringMatcher.CONTAINING);
-		
+		ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING);
+
 		Example example = Example.of(filtro, matcher);
 		return this.personaService.findAll(example);
-		
+
 	}
 
 	@PutMapping("{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void update(@PathVariable @ApiParam("ID do cliente") @Valid Integer id, 
-			@RequestBody Persona user) {
-		
-		this.personaService.findById(id).map(
-				usuarioExistente -> {
-					user.setId(usuarioExistente.getId());
-					this.personaService.save(user);
-					return usuarioExistente;
-				}
-				).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
-	}
-	@PutMapping("pay/{id}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void payDebito(@PathVariable @ApiParam("ID do cliente") Integer id) {
-		
-		this.personaService.findById(id).map(
-				usuarioExistente -> {
-					this.compraService.zerarDebitoDoCliente(id);
-					return usuarioExistente;
-				}
-				).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
+	@ApiOperation("Atualiza dados do cliente informado")
+	@ApiResponses({ @ApiResponse(code = 201, message = "Dados modificados com sucesso."),
+			@ApiResponse(code = 400, message = "Erro ao modificar dados do cliente.") })
+	public void update(@PathVariable @ApiParam("ID do cliente") @Valid Integer id, @RequestBody Persona user) {
+
+		this.personaService.findById(id).map(usuarioExistente -> {
+			user.setId(usuarioExistente.getId());
+			this.personaService.save(user);
+			return usuarioExistente;
+		}).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado para o ID informado."));
 	}
 
+	@PutMapping("pay/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@ApiOperation("Registra pagamento de todas as compras em aberto do cliente informado")
+	@ApiResponses({ @ApiResponse(code = 201, message = "Cliente quitou todos os débitos."),
+			@ApiResponse(code = 400, message = "Erro ao registrar baixa em débitos do cliente.") })
+	public void payDebito(@PathVariable @ApiParam("ID do cliente") Integer id) {
+
+		this.personaService.findById(id).map(usuarioExistente -> {
+			this.compraService.zerarDebitoDoCliente(id);
+			return usuarioExistente;
+		}).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado para o ID informado."));
+	}
 
 	@PostMapping("cliente")
 	@ResponseStatus(HttpStatus.CREATED)
 	@ApiOperation("Salva registro de clientes")
-	@ApiResponses({
-		@ApiResponse(code=201, message="Cliente registrado com sucesso."),
-		@ApiResponse(code=400, message="Erro ao registrar dados do cliente.")
-	})
+	@ApiResponses({ @ApiResponse(code = 201, message = "Cliente registrado com sucesso."),
+			@ApiResponse(code = 400, message = "Erro ao registrar dados do cliente.") })
 	public PersonaDto save(@RequestBody @Valid @ApiParam("JSON do cliente") ClientePostDto cliente) {
+			Persona persona = this.personaService.create(cliente);
+			return this.personaService.create(this.personaService.save(persona));
 
-		Persona persona = this.personaService.create(cliente);
-		return this.personaService.create(this.personaService.save(persona));
-		
 	}
-	@PostMapping("auth")
-	public TokenDto autenticar(@RequestBody @ApiParam("JSON do usuario") CredenciaisDto credenciais) {
-		System.out.println("Usuario:" + credenciais.getLogin());
-		System.out.println("senha informada:" + credenciais.getSenha());
-		try {
-			Persona usuarioAutenticado = userDetailsService.autenticar(
-					Persona.builder()
-						.id(Integer.parseInt(credenciais.getLogin()))
-						.senha(credenciais.getSenha()).build()
-					);
-			System.out.println("Usuario auth:" + usuarioAutenticado);
-			String token = this.jwtService.gerarToken(usuarioAutenticado);
-			System.out.println("token:" + token);
-			return new TokenDto(
-						String.valueOf(usuarioAutenticado.getId()),
-						usuarioAutenticado.getNome(),
-						token);
-			
-		}catch(PersonaNotFound | PasswordInValidException ex) {
-			
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ex.getMessage());
-			
-		}
-	}
+
 }

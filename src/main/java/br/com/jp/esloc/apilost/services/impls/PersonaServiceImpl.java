@@ -3,8 +3,6 @@ package br.com.jp.esloc.apilost.services.impls;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -16,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.jp.esloc.apilost.domain.ClientePostDto;
 import br.com.jp.esloc.apilost.domain.PersonaDto;
-import br.com.jp.esloc.apilost.exceptions.PersonaNotFound;
+import br.com.jp.esloc.apilost.exceptions.PersonaNotFoundException;
 import br.com.jp.esloc.apilost.models.Persona;
 import br.com.jp.esloc.apilost.repositories.PersonaRepository;
 import br.com.jp.esloc.apilost.services.PersonaService;
@@ -29,8 +27,7 @@ public class PersonaServiceImpl implements PersonaService{
 	
 	@Override
 	public Persona save(Persona persona) {
-		
-		//persona.setSenha(encoder.encode(persona.getSenha()));
+
 		return this.personaRepository.save(persona);
 	}
 
@@ -40,8 +37,8 @@ public class PersonaServiceImpl implements PersonaService{
 	}
 
 	@Override
-	public Optional<Persona> findById(Integer idPersona) throws PersonaNotFound {
-		return Optional.of(this.personaRepository.findById(idPersona).orElseThrow(()-> new PersonaNotFound("Cadastro não encontrado.")));
+	public Optional<Persona> findById(Integer idPersona) throws PersonaNotFoundException {
+		return Optional.of(this.personaRepository.findById(idPersona).orElseThrow(()-> new PersonaNotFoundException("{cliente.not.found}")));
 	}
 
 	@Override
@@ -56,7 +53,7 @@ public class PersonaServiceImpl implements PersonaService{
 	}
 
 	@Override
-	public Optional<Persona> findByLogin(String login) throws PersonaNotFound {
+	public Optional<Persona> findByLogin(String login) throws PersonaNotFoundException {
 		return this.personaRepository.findByLogin(Integer.parseInt(login));
 	}
 
@@ -96,7 +93,7 @@ public class PersonaServiceImpl implements PersonaService{
 	
 	@Override
 	public Persona create(ClientePostDto cliente) {
-		Persona vendedor = this.personaRepository.findById(cliente.getVendedor()).orElseThrow(()->new PersonaNotFound("Vendedor não encontrado."));
+		Persona vendedor = this.personaRepository.findById(cliente.getVendedor()).orElseThrow(()->new PersonaNotFoundException("{vendedor.not.found}"));
 		
 			return Persona.builder()
 					.id(cliente.getId())
@@ -114,7 +111,7 @@ public class PersonaServiceImpl implements PersonaService{
 	@Override
 	public PersonaDto create(Persona persona) {
 		
-		Persona vendedor = this.personaRepository.findById(persona.getId()).orElseThrow(()->new PersonaNotFound("Vendedor não encontrado."));
+		Persona vendedor = this.personaRepository.findById(persona.getId()).orElseThrow(()->new PersonaNotFoundException("{vendedor.not.found}"));
 		
 		return PersonaDto.builder()
 				.id(persona.getId())

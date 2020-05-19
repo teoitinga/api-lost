@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import br.com.jp.esloc.apilost.exceptions.ItemNotFound;
+import br.com.jp.esloc.apilost.exceptions.ItemNotFoundException;
 import br.com.jp.esloc.apilost.models.Detalhecompra;
 import br.com.jp.esloc.apilost.repositories.DetalheCompraRepository;
 import br.com.jp.esloc.apilost.services.DetalheCompraService;
@@ -21,9 +21,9 @@ public class DetalheCompraServiceImpl implements DetalheCompraService{
 	}
 
 	@Override
-	public Detalhecompra findById(Integer idItem) throws ItemNotFound {
+	public Detalhecompra findById(Integer idItem) throws ItemNotFoundException {
 		return this.detalheCompraRepository.findById(idItem)
-				.orElseThrow(()-> new ItemNotFound("Item de compra não encontrado."));
+				.orElseThrow(()-> new ItemNotFoundException("{item.not.found}"));
 	}
 
 	@Override
