@@ -1,5 +1,6 @@
 package br.com.jp.esloc.apilost.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -16,5 +17,7 @@ public interface PersonaRepository extends JpaRepository<Persona, Integer>{
 
 	@Query("select p from Persona p")
 	Page<Persona> search(String lowerCase, PageRequest pageRequest);
+
+	List<Persona> findByCategoria(String string);
 
 }

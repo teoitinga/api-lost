@@ -13,6 +13,7 @@ import br.com.jp.esloc.apilost.services.PersonaService;
 
 @Service(value = "userDetailsServiceImpl")
 public class UserDetailsServiceImpl implements UserDetailsService {
+	
 	@Autowired
 	private PersonaService personaService;
 	

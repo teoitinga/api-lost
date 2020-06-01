@@ -1,6 +1,8 @@
 package br.com.jp.esloc.apilost.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotBlank;
@@ -23,13 +25,13 @@ public class PersonaDto implements Serializable {
 	private String apelido;
 	private String endereco;
 	private String fone;
-	private LocalDateTime dataCadastro;
+	private LocalDate dataCadastro;
 	private Integer usuario;
 	private Integer prazo;
 	private Integer state;
 	private LocalDateTime ultAtualizacao;
 	private String senha;
 	private String categoria;
-	private Double debito;
+	private BigDecimal debito;
 
 }

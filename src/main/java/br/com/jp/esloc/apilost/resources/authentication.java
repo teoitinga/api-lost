@@ -18,8 +18,6 @@ import br.com.jp.esloc.apilost.exceptions.UserNotAutenticatedException;
 import br.com.jp.esloc.apilost.models.Persona;
 import br.com.jp.esloc.apilost.security.UserDetailsServiceImpl;
 import br.com.jp.esloc.apilost.security.jwt.JwtService;
-import br.com.jp.esloc.apilost.services.CompraService;
-import br.com.jp.esloc.apilost.services.PersonaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,7 +27,7 @@ import io.swagger.annotations.ApiResponses;
 @RestController
 @RequestMapping("/api/v1/auth")
 @Api("Api de Autenticação de usuarios")
-@CrossOrigin
+//@CrossOrigin(origins = "*")
 public class authentication {
 
 	@Autowired
@@ -39,31 +37,23 @@ public class authentication {
 	@Qualifier("userDetailsServiceImpl")
 	private UserDetailsServiceImpl userDetailsService;
 
-	/*
-	 * @Autowired private PersonaService personaService;
-	 * 
-	 * @Autowired private CompraService compraService;
-	 */
-
 	@PostMapping
 	@ResponseStatus(HttpStatus.OK)
 	@ApiOperation("Autenticação de usuário")
 	@ApiResponses({ @ApiResponse(code = 200, message = "Usuário logadon com sucesso."),
 		@ApiResponse(code = 400, message = "Erro ao registrar login de usuário.") })
 	public TokenDto autenticar(@RequestBody @ApiParam("JSON do usuario") CredenciaisDto credenciais) {
-		
-		  System.out.println("Usuario:" + credenciais.getLogin());
-		  System.out.println("senha informada:" + credenciais.getSenha());
 		 
 		try {
 			Persona usuarioAutenticado = userDetailsService.autenticar(Persona.builder()
 					.id(Integer.parseInt(credenciais.getLogin())).senha(credenciais.getSenha()).build());
-			System.out.println("Usuario auth:" + usuarioAutenticado);
-			String token = this.jwtService.gerarToken(usuarioAutenticado);
-			System.out.println("token:" + token);
+			
+			String token = this.jwtService.obterToken(usuarioAutenticado);
+			
+			System.out.println("token: Bearer " + token);
 			return new TokenDto(String.valueOf(usuarioAutenticado.getId()), usuarioAutenticado.getNome(), token);
 
-		} catch (PersonaNotFoundException | PasswordInValidException ex) {
+		} catch (PersonaNotFoundException | PasswordInValidException | NumberFormatException ex) {
 
 			throw new UserNotAutenticatedException(ex.getMessage());
 

@@ -3,13 +3,14 @@ package br.com.jp.esloc.apilost.resources;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,12 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.com.jp.esloc.apilost.domain.ClientePostDto;
-import br.com.jp.esloc.apilost.domain.CredenciaisDto;
+import br.com.jp.esloc.apilost.domain.ClientePutDto;
 import br.com.jp.esloc.apilost.domain.PersonaDto;
-import br.com.jp.esloc.apilost.domain.TokenDto;
-import br.com.jp.esloc.apilost.exceptions.PasswordInValidException;
-import br.com.jp.esloc.apilost.exceptions.PersonaNotFoundException;
-import br.com.jp.esloc.apilost.exceptions.UserNotAutenticatedException;
 import br.com.jp.esloc.apilost.models.Persona;
 import br.com.jp.esloc.apilost.security.UserDetailsServiceImpl;
 import br.com.jp.esloc.apilost.security.jwt.JwtService;
@@ -44,7 +41,7 @@ import io.swagger.annotations.ApiResponses;
 @RestController
 @RequestMapping("/api/v1/users")
 @Api("Api Cliente e usuarios")
-@CrossOrigin
+@CrossOrigin(origins = "*")
 public class PersonaResource {
 
 	@Autowired
@@ -87,8 +84,10 @@ public class PersonaResource {
 	@ApiOperation("Obtem registro de todos os clientes")
 	@ApiResponses({ @ApiResponse(code = 200, message = "Lista de clientes obtidos com sucessoCliente "),
 			@ApiResponse(code = 404, message = "Não foi possível obter uma lista de clientes.") })
-	public Page<Persona> getAll() {
-		return personaService.findAll();
+	public List<PersonaDto> getAll() {
+		return this.personaService.toListPersonaDto(this.personaService.findClientes())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado para o ID informado."));
+
 	}
 
 	@GetMapping("/filter")
@@ -108,12 +107,20 @@ public class PersonaResource {
 	@ApiOperation("Atualiza dados do cliente informado")
 	@ApiResponses({ @ApiResponse(code = 201, message = "Dados modificados com sucesso."),
 			@ApiResponse(code = 400, message = "Erro ao modificar dados do cliente.") })
-	public void update(@PathVariable @ApiParam("ID do cliente") @Valid Integer id, @RequestBody Persona user) {
+	public void update(@PathVariable @ApiParam("ID do cliente") @Valid Integer id, @RequestBody ClientePutDto cliente) {
 
-		this.personaService.findById(id).map(usuarioExistente -> {
-			user.setId(usuarioExistente.getId());
-			this.personaService.save(user);
-			return usuarioExistente;
+		this.personaService.findById(id).map(clienteEncontradoNoBD -> {
+			//atualizando os dados e mantendo o restante
+			clienteEncontradoNoBD.setNome(cliente.getNome());
+			clienteEncontradoNoBD.setApelido(cliente.getApelido());
+			clienteEncontradoNoBD.setEndereco(cliente.getEndereco());
+			clienteEncontradoNoBD.setFone(cliente.getFone());
+			clienteEncontradoNoBD.setRg(cliente.getRg());
+			clienteEncontradoNoBD.setUsuario(cliente.getVendedor());
+			clienteEncontradoNoBD.setPrazo(cliente.getPrazo());
+			
+			return this.personaService.save(clienteEncontradoNoBD);
+			
 		}).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado para o ID informado."));
 	}
 
@@ -137,6 +144,7 @@ public class PersonaResource {
 			@ApiResponse(code = 400, message = "Erro ao registrar dados do cliente.") })
 	public PersonaDto save(@RequestBody @Valid @ApiParam("JSON do cliente") ClientePostDto cliente) {
 			Persona persona = this.personaService.create(cliente);
+			
 			return this.personaService.create(this.personaService.save(persona));
 
 	}

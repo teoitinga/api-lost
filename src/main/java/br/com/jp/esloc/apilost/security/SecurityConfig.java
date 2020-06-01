@@ -25,52 +25,44 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	@Qualifier("userDetailsServiceImpl")
 	private UserDetailsServiceImpl userDetailsService;
-	
+
 	@Autowired
 	private JwtService jwtService;
-	
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http
-		.csrf().disable()
-		.authorizeRequests()
-				
-				  .antMatchers("/api/v1/users/**").hasAnyAuthority( "ADMIN", "USER")
-				  .antMatchers("/api/v1/compras/**").hasAnyAuthority( "ADMIN", "USER")
-				  .antMatchers("/api/v1/auth/**").permitAll()
-
-		.and()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-		.and()
-			.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+		http.csrf().disable().authorizeRequests()
+			.antMatchers("/api/v1/users/**").hasAnyAuthority("ADMIN", "USER")
+				.antMatchers("/api/v1/compras/**").hasAnyAuthority("ADMIN", "USER")
+				.antMatchers("/api/v1/auth/**").permitAll()
+				.anyRequest().authenticated()
+				.and()
+				.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+				.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 		;
 	}
-	
+
 	@Bean
 	public OncePerRequestFilter jwtFilter() {
 		return new JwtAuthFilter(this.jwtService, this.userDetailsService);
 	}
-	
-    @Bean
-    public PasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-    	web.ignoring().antMatchers(
-    			"/v2/api-docs",
-    			"/configuration/ui",
-    			"/swagger-resources/**",
-    			"/configuration/security",
-    			"/swagger-ui.html",
-    			"/webjars/**"
-    			);
-    }
+
+	@Bean
+	public PasswordEncoder bCryptPasswordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
+				"/configuration/security", "/swagger-ui.html", "/webjars/**");
+	}
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-  
-		  auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
-	 	  	  
-			 		 
+
+		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+
 	}
 }

@@ -4,12 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import br.com.jp.esloc.apilost.exceptions.CompraNotFoundException;
 import br.com.jp.esloc.apilost.exceptions.ItemNotFoundException;
@@ -54,6 +51,11 @@ public class ApplicationControllerAdvice {//extends ResponseEntityExceptionHandl
 	@ExceptionHandler(UserNotAutenticatedException.class)
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	public ApiErrors handlerPasswordInValidException(UserNotAutenticatedException ex) {
+		return new ApiErrors(ex.getMessage());
+	}
+	@ExceptionHandler(NumberFormatException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ApiErrors handlerPasswordInValidException(NumberFormatException ex) {
 		return new ApiErrors(ex.getMessage());
 	}
 

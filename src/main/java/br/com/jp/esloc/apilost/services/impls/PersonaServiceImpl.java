@@ -1,7 +1,11 @@
 package br.com.jp.esloc.apilost.services.impls;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -13,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import br.com.jp.esloc.apilost.domain.ClientePostDto;
+import br.com.jp.esloc.apilost.domain.ClientePutDto;
 import br.com.jp.esloc.apilost.domain.PersonaDto;
 import br.com.jp.esloc.apilost.exceptions.PersonaNotFoundException;
 import br.com.jp.esloc.apilost.models.Persona;
@@ -27,7 +32,9 @@ public class PersonaServiceImpl implements PersonaService{
 	
 	@Override
 	public Persona save(Persona persona) {
-
+		if(persona.getId() == null) {
+			persona.setDebito(BigDecimal.ZERO);
+		}
 		return this.personaRepository.save(persona);
 	}
 
@@ -54,9 +61,12 @@ public class PersonaServiceImpl implements PersonaService{
 
 	@Override
 	public Optional<Persona> findByLogin(String login) throws PersonaNotFoundException {
+
 		return this.personaRepository.findByLogin(Integer.parseInt(login));
 	}
-
+	public List<Persona> findClientes(){
+		return this.personaRepository.findByCategoria("c");
+	}
 	public Page<Persona> search(
             String searchTerm,
             int page,
@@ -92,8 +102,23 @@ public class PersonaServiceImpl implements PersonaService{
 
 	
 	@Override
-	public Persona create(ClientePostDto cliente) {
+	public Persona create(ClientePutDto cliente) {
 		Persona vendedor = this.personaRepository.findById(cliente.getVendedor()).orElseThrow(()->new PersonaNotFoundException("{vendedor.not.found}"));
+		
+		return Persona.builder()
+				.id(cliente.getId())
+				.nome(cliente.getNome())
+				.rg(cliente.getRg())
+				.apelido(cliente.getApelido())
+				.endereco(cliente.getEndereco())
+				.fone(cliente.getFone())
+				.usuario(vendedor.getId())
+				.prazo(cliente.getPrazo())
+				.build();
+	}
+	@Override
+	public Persona create(ClientePostDto cliente) {
+			Persona vendedor = this.personaRepository.findById(cliente.getVendedor()).orElseThrow(()->new PersonaNotFoundException("{vendedor.not.found}"));
 		
 			return Persona.builder()
 					.id(cliente.getId())
@@ -112,7 +137,7 @@ public class PersonaServiceImpl implements PersonaService{
 	public PersonaDto create(Persona persona) {
 		
 		Persona vendedor = this.personaRepository.findById(persona.getId()).orElseThrow(()->new PersonaNotFoundException("{vendedor.not.found}"));
-		
+
 		return PersonaDto.builder()
 				.id(persona.getId())
 				.nome(persona.getNome())
@@ -120,11 +145,53 @@ public class PersonaServiceImpl implements PersonaService{
 				.apelido(persona.getApelido())
 				.endereco(persona.getEndereco())
 				.fone(persona.getFone())
-				.usuario(vendedor.getId())
+				.usuario(vendedor.getUsuario())
 				.prazo(persona.getPrazo())
 				.state(persona.getState())
 				.categoria(persona.getCategoria())
+				.dataCadastro(persona.getDataCadastro())
+				.ultAtualizacao(persona.getUltAtualizacao())
+				.senha(persona.getSenha())
+				.debito(persona.getDebito())
 				.build();
 	}
-
+	public Optional<List<PersonaDto>> toListPersonaDto(List<Persona> pessoal){
+		return Optional.of(pessoal.stream()
+				.map(persona->this.toPersonaDto(persona))
+				.collect(Collectors.toList()));
+	}
+	public PersonaDto toPersonaDto(Persona persona) {
+		return PersonaDto.builder()
+				.id(persona.getId())
+				.nome(persona.getNome())
+				.apelido(persona.getApelido())
+				.endereco(persona.getEndereco())
+				.rg(persona.getRg())
+				.fone(persona.getFone())
+				.dataCadastro(persona.getDataCadastro())
+				.usuario(persona.getUsuario())
+				.prazo(persona.getPrazo())
+				.state(persona.getState())
+				.ultAtualizacao(persona.getUltAtualizacao())
+				.senha(persona.getSenha())
+				.categoria(persona.getCategoria())
+				.debito(persona.getDebito())
+				.build();
+				
+	}
+	/*
+	 * 	private String nome;x
+	private String rg;x
+	private String apelido;x
+	private String endereco;x
+	private String fone;x
+	private Integer usuario;x
+	private Integer prazo;x
+	private Integer state;x
+	private String categoria;x
+	private LocalDateTime dataCadastro;
+	private LocalDateTime ultAtualizacao;
+	private String senha;
+	private Double debito;
+	 */
 }

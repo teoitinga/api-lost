@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,20 +21,16 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import br.com.jp.esloc.apilost.domain.ClientePostDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 @Entity
@@ -95,9 +92,8 @@ public class Persona implements UserDetails, Serializable {
 		joinColumns = @JoinColumn(name="user_id", referencedColumnName = "id"),
 		inverseJoinColumns = @JoinColumn(name="role_id", referencedColumnName = "id"))
 	private List<Role> roles;
+
 	@Column(name = "debito", precision = 22)
-	@Getter
-	@Setter
 	private BigDecimal debito;
 
 	public Persona(String nome, String rg, String apelido, String endereco, String fone, LocalDate dataCadastro,
