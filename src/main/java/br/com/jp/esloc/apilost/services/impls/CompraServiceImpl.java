@@ -125,19 +125,20 @@ public class CompraServiceImpl implements CompraService {
 				.valueOf(itens.stream().map(item -> item.getVltotal()).mapToDouble(BigDecimal::doubleValue).sum());
 		compra.setValorCompra(valorDaCompra);
 
+		log.info("Inserindo compra para o cliente" + cliente.getNome());
+		
 		// atualiza débito do cliente
 		if (cliente.getDebito() == null || cliente.getDebito().equals(BigDecimal.ZERO)) {
 			// o Debito atual é zerado no registro
 			cliente.setDebito(BigDecimal.ZERO);
 			compra.setDebAtual(cliente.getDebito());
-		} else {
-			// configurando o valor do debito atual do cliente nesta compra
-			// é o valor atual do debito, excluido o valor da compra em processo de registro
-			compra.setDebAtual(cliente.getDebito());
-
-			// atualiza débito do cliente, incluindo a compra em registro
-			cliente.setDebito(cliente.getDebito().add(compra.getValorCompra()));
 		}
+		// configurando o valor do debito atual do cliente nesta compra
+		// é o valor atual do debito, excluido o valor da compra em processo de registro
+		compra.setDebAtual(cliente.getDebito());
+		// atualiza débito do cliente, incluindo a compra em registro
+		cliente.setDebito(cliente.getDebito().add(compra.getValorCompra()));
+		this.personaRepository.save(cliente);
 		compra = this.compraRepository.save(compra);
 		itens = this.detalheCompraRepository.saveAll(itens);
 		compra.setItens(itens);
@@ -180,8 +181,13 @@ public class CompraServiceImpl implements CompraService {
 		if (CollectionUtils.isEmpty(itens)) {
 			return Collections.emptyList();
 		}
-		return itens.stream().map(item -> ItensDto.builder().id(item.getId()).dsc(item.getDsc())
-				.vlunit(item.getVlunit()).qtd(item.getQtd()).desconto(item.getDesconto()).build())
+		return itens.stream().map(item -> ItensDto.builder()
+				.id(item.getId())
+				.description(item.getDescription())
+				.unitvalue(item.getUnitvalue())
+				.qtd(item.getQtd())
+				.desconto(item.getDesconto())
+				.build())
 				.collect(Collectors.toList());
 	}
 
@@ -190,8 +196,13 @@ public class CompraServiceImpl implements CompraService {
 		if (CollectionUtils.isEmpty(itens)) {
 			return Collections.emptyList();
 		}
-		return itens.stream().map(item -> ItensDto.builder().id(item.getId()).dsc(item.getDsc())
-				.vlunit(item.getVlunit()).qtd(item.getQtd()).desconto(item.getDesconto()).build())
+		return itens.stream().map(item -> ItensDto.builder()
+				.id(item.getId())
+				.description(item.getDsc())
+				.unitvalue(item.getVlunit())
+				.qtd(item.getQtd())
+				.desconto(item.getDesconto())
+				.build())
 				.collect(Collectors.toList());
 	}
 
@@ -206,7 +217,7 @@ public class CompraServiceImpl implements CompraService {
 		return itens.stream().map(dto -> {
 			Detalhecompra itemDeCompra = new Detalhecompra();
 			itemDeCompra.setCompra(compra);
-			itemDeCompra.setDsc(dto.getDsc());
+			itemDeCompra.setDsc(dto.getDescription());
 			// Se o DESCONTO é null atribui 0
 			if (dto.getDesconto() == null) {
 				dto.setDesconto(BigDecimal.ZERO);
@@ -220,13 +231,13 @@ public class CompraServiceImpl implements CompraService {
 			itemDeCompra.setQtd(dto.getQtd());
 
 			// Se o VALOR UNITARIOé null atribui o valor 0
-			if (dto.getVlunit() == null) {
+			if (dto.getUnitvalue() == null) {
 				dto.setDesconto(BigDecimal.ZERO);
 			}
-			itemDeCompra.setVlunit(dto.getVlunit());
+			itemDeCompra.setVlunit(dto.getUnitvalue());
 
 			// Calcula o valor do item com as informaçoes anteriores
-			itemDeCompra.setVltotal(dto.getQtd().multiply(dto.getVlunit()).subtract(dto.getDesconto()));
+			itemDeCompra.setVltotal(dto.getQtd().multiply(dto.getUnitvalue()).subtract(dto.getDesconto()));
 			return itemDeCompra;
 		}).collect(Collectors.toList());
 	}

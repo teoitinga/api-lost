@@ -3,8 +3,6 @@ package br.com.jp.esloc.apilost.resources;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -124,7 +122,7 @@ public class PersonaResource {
 		}).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado para o ID informado."));
 	}
 
-	@PutMapping("pay/{id}")
+	@GetMapping("pay/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@ApiOperation("Registra pagamento de todas as compras em aberto do cliente informado")
 	@ApiResponses({ @ApiResponse(code = 201, message = "Cliente quitou todos os débitos."),

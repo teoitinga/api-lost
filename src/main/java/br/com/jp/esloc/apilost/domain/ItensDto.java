@@ -18,8 +18,8 @@ import lombok.ToString;
 public class ItensDto {
 
     private Integer id;
-    private String dsc;
-    private BigDecimal vlunit;
+    private String description;
+    private BigDecimal unitvalue;
     private BigDecimal qtd;
     private BigDecimal desconto;
     
