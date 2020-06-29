@@ -1,8 +1,6 @@
 package br.com.jp.esloc.apilost.services.impls;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -179,19 +177,5 @@ public class PersonaServiceImpl implements PersonaService{
 				.build();
 				
 	}
-	/*
-	 * 	private String nome;x
-	private String rg;x
-	private String apelido;x
-	private String endereco;x
-	private String fone;x
-	private Integer usuario;x
-	private Integer prazo;x
-	private Integer state;x
-	private String categoria;x
-	private LocalDateTime dataCadastro;
-	private LocalDateTime ultAtualizacao;
-	private String senha;
-	private Double debito;
-	 */
+
 }

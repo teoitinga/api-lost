@@ -3,13 +3,12 @@ package br.com.jp.esloc.apilost.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
+import br.com.jp.esloc.apilost.domain.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import br.com.jp.esloc.apilost.domain.CompraNoQuitResponseDto;
-import br.com.jp.esloc.apilost.domain.CompraPostDto;
-import br.com.jp.esloc.apilost.domain.CompraResponseDto;
-import br.com.jp.esloc.apilost.domain.UpdatePagamentoDeContaDto;
 import br.com.jp.esloc.apilost.models.Compra;
 
 public interface CompraService {
@@ -54,5 +53,8 @@ public interface CompraService {
 	CompraResponseDto toResponseDto(Compra compra);
 
 	CompraResponseDto toResponseDto(CompraNoQuitResponseDto c);
+	List<CompraResponseDto> toComprasListDto(List<CompraResponseDto> compras);
+	List<ComprasListDto> toInLineCompraListDto(List<CompraResponseDto> compras);
 
+	void payParcial(@Valid ParcialPayDto payDto);
 }

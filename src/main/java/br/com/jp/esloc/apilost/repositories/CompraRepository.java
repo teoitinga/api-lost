@@ -1,6 +1,5 @@
 package br.com.jp.esloc.apilost.repositories;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

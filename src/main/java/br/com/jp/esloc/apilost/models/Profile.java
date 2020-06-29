@@ -1,15 +1,14 @@
 package br.com.jp.esloc.apilost.models;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -62,16 +61,15 @@ public class Profile implements Serializable {
 	@Column(name = "CIDADEEST")
 	private String cidadeest;
 	@Column(name = "ULTUPDATE")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date ultupdate;
+	private LocalDateTime ultupdate;
 	@Column(name = "TEMPOEXPIRA")
 	private Integer tempoexpira;
 	@Column(name = "ESTADO")
 	private String estado;
 	@Column(name = "VALORINSTALL")
-	private Double valorinstall;
+	private BigDecimal valorinstall;
 	@Column(name = "VALORMENSAL")
-	private Double valormensal;
+	private BigDecimal valormensal;
 	@Column(name = "DRIVERBCK")
 	private String driverbck;
 

@@ -1,12 +1,19 @@
 package br.com.jp.esloc.apilost.services.impls;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
+import br.com.jp.esloc.apilost.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,11 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import br.com.jp.esloc.apilost.domain.CompraNoQuitResponseDto;
-import br.com.jp.esloc.apilost.domain.CompraPostDto;
-import br.com.jp.esloc.apilost.domain.CompraResponseDto;
-import br.com.jp.esloc.apilost.domain.ItensDto;
-import br.com.jp.esloc.apilost.domain.UpdatePagamentoDeContaDto;
 import br.com.jp.esloc.apilost.exceptions.CompraNotFoundException;
 import br.com.jp.esloc.apilost.exceptions.PersonaNotFoundException;
 import br.com.jp.esloc.apilost.exceptions.RegraNegocioException;
@@ -93,7 +95,7 @@ public class CompraServiceImpl implements CompraService {
 	@Override
 	@Transactional
 	public CompraResponseDto save(CompraPostDto dto) {
-
+		log.info("compra{}", dto);
 		Compra compra = new Compra();
 		// buscando os dados do cliente
 		if (dto.getCliente() == null || dto.getCliente().equals("")) {
@@ -125,8 +127,8 @@ public class CompraServiceImpl implements CompraService {
 				.valueOf(itens.stream().map(item -> item.getVltotal()).mapToDouble(BigDecimal::doubleValue).sum());
 		compra.setValorCompra(valorDaCompra);
 
-		log.info("Inserindo compra para o cliente" + cliente.getNome());
-		
+		log.info("Registrando compra para o cliente" + cliente.getNome());
+
 		// atualiza débito do cliente
 		if (cliente.getDebito() == null || cliente.getDebito().equals(BigDecimal.ZERO)) {
 			// o Debito atual é zerado no registro
@@ -166,29 +168,55 @@ public class CompraServiceImpl implements CompraService {
 
 	public CompraResponseDto toResponseDto(CompraNoQuitResponseDto compra) {
 
-		return CompraResponseDto.builder()
-				.codigo(compra.getCodigo())
-				.dataCompra(compra.getDataCompra())
-				.recebedor(compra.getRecebedor())
-				.vendedor(compra.getVendedor())
-				.clienteNome(compra.getClienteNome())
-				.valorCompra(compra.getValorCompra())
-				.itens(toResponseDto(compra.getItens()))
-				.build();
+		return CompraResponseDto.builder().codigo(compra.getCodigo()).dataCompra(compra.getDataCompra())
+				.recebedor(compra.getRecebedor()).vendedor(compra.getVendedor()).clienteNome(compra.getClienteNome())
+				.valorCompra(compra.getValorCompra()).itens(toResponseDto(compra.getItens())).build();
 	}
 
 	private List<ItensDto> toResponseDto(List<ItensDto> itens) {
 		if (CollectionUtils.isEmpty(itens)) {
 			return Collections.emptyList();
 		}
-		return itens.stream().map(item -> ItensDto.builder()
-				.id(item.getId())
-				.description(item.getDescription())
-				.unitvalue(item.getUnitvalue())
-				.qtd(item.getQtd())
-				.desconto(item.getDesconto())
-				.build())
+		return itens.stream()
+				.map(item -> ItensDto.builder().id(item.getId()).description(item.getDescription())
+						.unitvalue(item.getUnitvalue()).qtd(item.getQtd()).desconto(item.getDesconto()).build())
 				.collect(Collectors.toList());
+	}
+
+//    private Integer codigo;
+//    private LocalDateTime dataCompra;
+//    private LocalDateTime dataPagamento;
+//    private String recebedor;
+//    private String vendedor;
+//    private String clienteNome;
+//    private BigDecimal valorCompra;
+//    private List<ItensDto> itens;
+//    private Integer ItemId;
+//    private String itemDescription;
+//    private BigDecimal ItemUnitvalue;
+//    private BigDecimal ItemQtd;
+//    private BigDecimal ItemDesconto;
+	private List<ComprasListDto> toCompraListDtoForItens(CompraResponseDto compraActive) {
+		if (CollectionUtils.isEmpty(compraActive.getItens())) {
+			return null;
+		}
+		// variaveis comuns
+		CompraResponseDto compras = compraActive;//this.toResponseDto(compraActive);
+
+		Integer codigo = compras.getCodigo();
+		LocalDateTime dataCompra = compras.getDataCompra();
+		LocalDateTime dataPagamento = compras.getDataPagamento();
+		String recebedor = compras.getRecebedor();
+		String vendedor = compras.getVendedor();
+		String clienteNome = compras.getClienteNome();
+		BigDecimal valorCompra = compras.getValorCompra();
+		return compras.getItens().stream()
+				.map(cmp -> ComprasListDto.builder().codigo(codigo).dataCompra(dataCompra).dataPagamento(dataPagamento)
+						.recebedor(recebedor).vendedor(vendedor).clienteNome(clienteNome).valorCompra(valorCompra)
+						.ItemId(cmp.getId()).itemDescription(cmp.getDescription()).ItemUnitvalue(cmp.getUnitvalue())
+						.ItemQtd(cmp.getQtd()).ItemDesconto(cmp.getDesconto()).build())
+				.collect(Collectors.toList());
+
 	}
 
 	private List<ItensDto> toDto(List<Detalhecompra> itens) {
@@ -196,13 +224,9 @@ public class CompraServiceImpl implements CompraService {
 		if (CollectionUtils.isEmpty(itens)) {
 			return Collections.emptyList();
 		}
-		return itens.stream().map(item -> ItensDto.builder()
-				.id(item.getId())
-				.description(item.getDsc())
-				.unitvalue(item.getVlunit())
-				.qtd(item.getQtd())
-				.desconto(item.getDesconto())
-				.build())
+		return itens
+				.stream().map(item -> ItensDto.builder().id(item.getId()).description(item.getDsc())
+						.unitvalue(item.getVlunit()).qtd(item.getQtd()).desconto(item.getDesconto()).build())
 				.collect(Collectors.toList());
 	}
 
@@ -309,8 +333,80 @@ public class CompraServiceImpl implements CompraService {
 
 	@Override
 	public Optional<List<CompraResponseDto>> getTeenCompras() {
-		return toListResponseDto(
-				this.compraRepository.findOrderByDataCompraDescTop10());
+		return toListResponseDto(this.compraRepository.findOrderByDataCompraDescTop10());
 	}
 
+	public List<Compra> getTeenTreeCompras() {
+		return (this.compraRepository.findOrderByDataCompraDescTop10());
+	}
+
+	private Optional<List<ComprasListDto>> toListFullDto(List<Compra> compras){
+		List<ComprasListDto> lista = new ArrayList<>();
+		
+		return Optional.of(lista);	
+	}
+
+	@Override
+	public List<CompraResponseDto> toComprasListDto(List<CompraResponseDto> compras) {
+		// TODO Auto-generated method stub
+		return compras;
+	}
+	@Override
+	public List<ComprasListDto> toInLineCompraListDto(List<CompraResponseDto> compras){
+		List<ComprasListDto> lista = new ArrayList<>();
+		for (CompraResponseDto c : compras ) {
+            lista.addAll(this.toCompraListDtoForItens(c));
+        }
+		return lista;
+		//return this.toCompraListDtoForItens(compras.get(0));
+	}
+// List<ComprasListDto> toCompraListDtoForItens(Compra compraActive)
+
+	@Override
+	@Transactional
+	public void payParcial(@Valid ParcialPayDto payDto) {
+		Detalhecompra item = new Detalhecompra();
+		Compra compra = new Compra();
+		BigDecimal debitoAtual;
+
+		LocalDateTime dataAtualização = LocalDateTime.now();
+
+		Persona cliente = this.personaRepository.findById(Integer.parseInt(payDto.getCliente()))
+				.orElseThrow(() -> new PersonaNotFoundException("Cliente não encontrado nos registros."));
+		
+		// buscando os dados do usuario
+		Persona vendedor = this.personaRepository.findById(Integer.parseInt(payDto.getVendedor()))
+				.orElseThrow(() -> new RegraNegocioException("Código de vendedor inválido."));
+		compra.setEntreguePor(vendedor);
+		
+		debitoAtual = cliente.getDebito();
+		//metodo atualiza data de pagamento para todas as compras em aberto do cliente. Não se aplica neste caso
+		//this.compraRepository.registrarPagamentoDeComprasEmAberto(dataAtualização, cliente.getId());
+		BigDecimal valorDoPagamento = payDto.getValor();
+		cliente.setDebito(cliente.getDebito().subtract(valorDoPagamento));
+		cliente.setUltAtualizacao(dataAtualização);
+		this.personaRepository.save(cliente);
+		
+		compra.setFkCliente(cliente);
+		compra.setDebAtual(debitoAtual);
+		compra.setDataCompra(payDto.getData());
+		compra.setEntreguePor(vendedor);
+		
+		
+		Detalhecompra pg = new Detalhecompra();
+		pg.setDsc(payDto.getDescricao());
+		pg.setCompra(compra);
+		pg.setDesconto(payDto.getValor());
+		pg.setQtd(BigDecimal.ONE);
+		pg.setVlunit(BigDecimal.ZERO);
+		
+		pg = this.detalheCompraRepository.save(pg);
+		compra.setItens(Arrays.asList(pg));
+
+		// atualizando dados da compra com a lista de itens populada
+		// compra = this.compraRepository.findByIdFetchItens(compra.getId());
+
+		cliente = this.personaRepository.save(cliente);
+
+	}
 }

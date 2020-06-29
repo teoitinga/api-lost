@@ -2,6 +2,9 @@ package br.com.jp.esloc.apilost.resources;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
+import br.com.jp.esloc.apilost.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,17 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.jp.esloc.apilost.domain.CompraNoQuitResponseDto;
-import br.com.jp.esloc.apilost.domain.CompraPostDto;
-import br.com.jp.esloc.apilost.domain.CompraResponseDto;
-import br.com.jp.esloc.apilost.domain.UpdatePagamentoDeContaDto;
 import br.com.jp.esloc.apilost.exceptions.CompraNotFoundException;
 import br.com.jp.esloc.apilost.models.Compra;
 import br.com.jp.esloc.apilost.services.CompraService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/compras")
 @CrossOrigin(origins = "*")
@@ -37,9 +37,30 @@ public class CompraResource {
 	@ApiOperation("Registra uma nova compra")
 	@ApiResponses({ @ApiResponse(code = 201, message = "Compra criada com sucesso."),
 			@ApiResponse(code = 404, message = "Não foi possível registrar a compra.") })
-	public CompraResponseDto save(@RequestBody CompraPostDto compraDto) {
-		CompraResponseDto compra = this.comprasService.save(compraDto);
-		return compra;
+	public CompraResponseDto save(@Valid @RequestBody CompraPostDto compraDto) {
+		log.info("Compra: {}", compraDto);
+		try {
+			CompraResponseDto compra = this.comprasService.save(compraDto);
+			return compra;
+			
+		}catch(java.lang.IllegalArgumentException e){
+			throw new CompraNotFoundException("Compra não informada.");
+		}
+	}
+	@PostMapping("parcialpay/{id}")
+	@ResponseStatus(HttpStatus.CREATED)
+	@ApiOperation("Registra pagamento parcial da conta do cliente informado")
+	@ApiResponses({ @ApiResponse(code = 201, message = "Pagamento registrado."),
+		@ApiResponse(code = 404, message = "Não foi possível registrar o pagamento.") })
+	public void registraPagamento(@Valid @RequestBody ParcialPayDto payDto) {
+		log.info("Pagamento: {}", payDto);
+		try {
+			this.comprasService.payParcial(payDto);
+
+			
+		}catch(java.lang.IllegalArgumentException e){
+			throw new CompraNotFoundException("Compra não informada.");
+		}
 	}
 	@GetMapping("{id}")
 	@ApiOperation("Obter detalhes da compra pelo código ID")
@@ -61,6 +82,7 @@ public class CompraResource {
 				.orElseThrow(() -> new CompraNotFoundException("Este cliente não possui compras registradas."))
 				; 
 	}
+
 	private List<CompraResponseDto> verificaCompras(List<CompraResponseDto> compra) throws CompraNotFoundException {
 		//Dispara erro caso não haja itens na lista de compra
 		if(compra.isEmpty()) {
@@ -81,7 +103,7 @@ public class CompraResource {
 	@ApiOperation("Atualiza os dados da compra com o ID informado")
 	@ApiResponses({ @ApiResponse(code = 200, message = "Compras modificada com sucesso."),
 			@ApiResponse(code = 404, message = "Não foi encontrada compras com o código informado.") })
-	public void updateDataPagamentoConta(@PathVariable Integer id,
+	public void updateDataPagamentoConta(@Valid @PathVariable Integer id,
 									@RequestBody UpdatePagamentoDeContaDto dto) {
 		this.comprasService.updatePagamento(id, dto);
 	}
@@ -111,20 +133,37 @@ public class CompraResource {
 		@ApiResponse(code = 404, message = "Não foi encontrada compras.") })
 	public List<CompraResponseDto> getLastCompras() {
 		return this.comprasService.getTeenCompras()
-				.map(compra -> verificaCompras(compra))
+				.map(compra -> toCompraListDto(compra))
 				.orElseThrow(()->new CompraNotFoundException())
 				; 
 	}
-	
+	@GetMapping("/teenfull")
+	@ApiOperation("Retorna a lista das 10 ultimas compras registradas em formato de linha agrupada")
+	@ApiResponses({ @ApiResponse(code = 200, message = "Lista de compras registradas."),
+		@ApiResponse(code = 404, message = "Não foi encontrada nenhuma compra.") })
+	public List<ComprasListDto> getLastFullCompras() {
+		return this.comprasService.getTeenCompras()
+				.map(compra -> toInLineCompraListDto(compra))
+				.orElseThrow(()->new CompraNotFoundException())
+				; 
+	}
+	private List<ComprasListDto> toInLineCompraListDto(List<CompraResponseDto> compra) {
+		//Dispara erro caso não haja itens na lista de compra
+		if(compra.isEmpty()) {
+			throw new CompraNotFoundException("Não foi encontrada compras quitadas para este cliente.");
+		}
+		return this.comprasService.toInLineCompraListDto(compra);
+	}
 	private CompraResponseDto toResponseDto(Compra c) {
-
+		
 		return this.comprasService.toResponseDto(c);
 	}
-	
-	/*
-	 * private CompraResponseDto toResponseDto(CompraNoQuitResponseDto c) {
-	 * 
-	 * return this.comprasService.toResponseDto(c); }
-	 */
+	private List<CompraResponseDto> toCompraListDto(List<CompraResponseDto> compra) {
+		//Dispara erro caso não haja itens na lista de compra
+		if(compra.isEmpty()) {
+			throw new CompraNotFoundException("Não foi encontrada compras quitadas para este cliente.");
+		}
+		return this.comprasService.toComprasListDto(compra);
+	}
 
 }
