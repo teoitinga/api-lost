@@ -13,9 +13,9 @@ import br.com.jp.esloc.apilost.models.Profile;
 public interface ProfileRepository extends JpaRepository<Profile, Integer>{
 	@Query(value = "SELECT * FROM Perfil p LIMIT 1", nativeQuery = true)
 	Optional<Profile> findFirst();
-	@Query(value = "SELECT month(data_compra) as mes, year(data_compra) as ano, sum(valor_compra) as valor, count(valor_compra) as qtd FROM lost.compra where valor_compra > 0 group by month(data_compra), year(data_compra) order by ano desc, mes desc", nativeQuery = true)
+	@Query(value = "SELECT month(data_compra) as mes, year(data_compra) as ano, sum(valor_compra) as valor, count(valor_compra) as qtd FROM lost.compra where valor_compra > 0 group by month(data_compra), year(data_compra) order by ano desc, mes desc LIMIT 13", nativeQuery = true)
 	List<Object[]> fluxoMensalDeVendas();
-	@Query(value = "SELECT month(data_compra) as mes, year(data_compra) as ano, sum(valor_compra) as valor, count(valor_compra) as qtd FROM lost.compra where valor_compra <= 0 group by month(data_compra), year(data_compra) order by ano desc, mes desc", nativeQuery = true)
+	@Query(value = "SELECT month(data_compra) as mes, year(data_compra) as ano, sum(valor_compra) as valor, count(valor_compra) as qtd FROM lost.compra where valor_compra <= 0 group by month(data_compra), year(data_compra) order by ano desc, mes desc LIMIT 13", nativeQuery = true)
 	List<Object[]> fluxoMensalDeCreditos();
 	
 	@Query(value = "select sum(valor_compra) from lost.compra where valor_compra < 0", nativeQuery = true)

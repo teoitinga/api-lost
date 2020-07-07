@@ -68,7 +68,7 @@ public class ProfileServiceImpl implements ProfileService {
 		try {
 			fluxo.setAno(Integer.parseInt(String.valueOf(object[1])));
 			fluxo.setMes(Integer.parseInt(String.valueOf(object[0])));
-			fluxo.setValor(BigDecimal.valueOf(Double.parseDouble(String.valueOf(object[2]))));
+			fluxo.setValor(BigDecimal.valueOf(Double.parseDouble(String.valueOf(object[2]))).abs().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 			fluxo.setQuantidade(Integer.parseInt(String.valueOf(object[3])));
 		} catch (Exception e) {
 
