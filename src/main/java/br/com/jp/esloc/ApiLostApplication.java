@@ -38,7 +38,7 @@ public class ApiLostApplication extends SpringBootServletInitializer {
 			List<Persona> pessoal = null; 
 			if (!personaService.isContaining()) {
 				pessoal = new ArrayList<Persona>();
-				pessoal.add(new Persona("José"));
+				pessoal.add(new Persona("José Maria"));
 				pessoal.add(new Persona("Maria"));
 				pessoal.add(new Persona("Pedro"));
 				pessoal.add(new Persona("Marculino"));
