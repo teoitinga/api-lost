@@ -34,14 +34,14 @@ public class ApiLostApplication extends SpringBootServletInitializer {
 
 		}
 		private void createPersonaIfNotExists() {
+			// Cria permissões caso não exista as roles do usuario
 			// criando registros para testar o sistema
 			List<Persona> pessoal = null; 
 			if (!personaService.isContaining()) {
 				pessoal = new ArrayList<Persona>();
-				pessoal.add(new Persona("José Maria"));
-				pessoal.add(new Persona("Maria"));
-				pessoal.add(new Persona("Pedro"));
-				pessoal.add(new Persona("Marculino"));
+				pessoal.add(new Persona("Teo"));
+				pessoal.add(new Persona("Tino"));
+
 				
 				pessoal.forEach(pessoa -> personaService.save(pessoa));
 			}
