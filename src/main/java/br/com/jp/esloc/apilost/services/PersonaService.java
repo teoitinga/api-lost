@@ -28,5 +28,6 @@ public interface PersonaService {
 	PersonaDto create(Persona persona);
 	Optional<List<PersonaDto>> toListPersonaDto(List<Persona> findClientes);
 	Persona create(ClientePutDto cliente);
+	void deleteAll();
 	
 }

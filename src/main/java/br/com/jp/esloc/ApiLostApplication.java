@@ -12,36 +12,53 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import br.com.jp.esloc.apilost.models.Persona;
 import br.com.jp.esloc.apilost.models.Role;
 import br.com.jp.esloc.apilost.services.PersonaService;
-
+import br.com.jp.esloc.apilost.services.RoleService;
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @SpringBootApplication
 public class ApiLostApplication extends SpringBootServletInitializer {
 	
-	private static final Logger log = LoggerFactory.getLogger(ApiLostApplication.class);
-	
+
 	@Autowired
 	private PersonaService personaService;
-
+	
+	@Autowired
+	private RoleService roleService;
+	
+	@Autowired
+	private PasswordEncoder bCryptPasswordEncoder;
+	
 	public static void main(String[] args) {
 		SpringApplication.run(ApiLostApplication.class, args);
 	}
+	
 	@Component
 	public class CommandLineAppStartupRunner implements CommandLineRunner {
 		@Override
 		public void run(String... args) throws Exception {
-			//createPersonaIfNotExists();
+			createPersonaIfNotExists();
 
 		}
 		private void createPersonaIfNotExists() {
+			personaService.deleteAll();
+			log.info("Verificando se existe usuários cadastrados! {}", personaService.isContaining());
 			// Cria permissões caso não exista as roles do usuario
 			// criando registros para testar o sistema
 			List<Persona> pessoal = null; 
 			if (!personaService.isContaining()) {
-				Role ADMIN = Role.builder().permissao("ADMIN").build();
+				log.info("Nenhum usuário registrado...");
+				log.info("Criando usuário padrão");
+				Role ADMIN = roleService.getRoleAdmin();
+				if(ADMIN == null) {
+					ADMIN = Role.builder().permissao("ADMIN").build();
+					ADMIN = roleService.save(ADMIN);
+				}
 				
 				pessoal = new ArrayList<Persona>();
 				pessoal.add(Persona.builder()
@@ -50,7 +67,7 @@ public class ApiLostApplication extends SpringBootServletInitializer {
 						.fone("33 99906-5029")
 						.categoria("m")
 						.debito(BigDecimal.ZERO)
-						.senha("jacare")
+						.senha(bCryptPasswordEncoder.encode("jacare"))
 						.roles(Arrays.asList(ADMIN))
 						.build());
 				

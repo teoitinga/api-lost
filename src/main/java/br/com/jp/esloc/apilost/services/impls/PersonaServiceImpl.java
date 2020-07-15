@@ -178,4 +178,9 @@ public class PersonaServiceImpl implements PersonaService{
 				
 	}
 
+	@Override
+	public void deleteAll() {
+		this.personaRepository.deleteAll();
+	}
+
 }
