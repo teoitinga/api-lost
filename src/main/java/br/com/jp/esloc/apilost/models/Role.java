@@ -11,12 +11,18 @@ import javax.persistence.Id;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
 @EqualsAndHashCode(of = { "id" })
+@Data
+@Builder
+@AllArgsConstructor
 public class Role implements GrantedAuthority, Serializable {
 
 	private static final long serialVersionUID = 3262228163476170048L;

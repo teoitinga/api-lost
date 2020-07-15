@@ -1,6 +1,8 @@
 package br.com.jp.esloc;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.stereotype.Component;
 
 import br.com.jp.esloc.apilost.models.Persona;
+import br.com.jp.esloc.apilost.models.Role;
 import br.com.jp.esloc.apilost.services.PersonaService;
 
 @SpringBootApplication
@@ -38,10 +41,18 @@ public class ApiLostApplication extends SpringBootServletInitializer {
 			// criando registros para testar o sistema
 			List<Persona> pessoal = null; 
 			if (!personaService.isContaining()) {
+				Role ADMIN = Role.builder().permissao("ADMIN").build();
+				
 				pessoal = new ArrayList<Persona>();
-				pessoal.add(new Persona("Teo"));
-				pessoal.add(new Persona("Tino"));
-
+				pessoal.add(Persona.builder()
+						.apelido("Teo")
+						.nome("João Paulo")
+						.fone("33 99906-5029")
+						.categoria("m")
+						.debito(BigDecimal.ZERO)
+						.senha("jacare")
+						.roles(Arrays.asList(ADMIN))
+						.build());
 				
 				pessoal.forEach(pessoa -> personaService.save(pessoa));
 			}
