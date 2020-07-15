@@ -40,11 +40,7 @@ public class ApiLostApplication extends SpringBootServletInitializer {
 		SpringApplication.run(ApiLostApplication.class, args);
 	}
 	
-	@Bean
-	public PasswordEncoder bCryptPasswordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-	
+
 	@Component
 	public class CommandLineAppStartupRunner implements CommandLineRunner {
 		@Override
@@ -53,7 +49,7 @@ public class ApiLostApplication extends SpringBootServletInitializer {
 
 		}
 		private void createPersonaIfNotExists() {
-			personaService.deleteAll();
+			//personaService.deleteAll();
 			log.info("Verificando se existe usuários cadastrados! {}", personaService.isContaining());
 			// Cria permissões caso não exista as roles do usuario
 			// criando registros para testar o sistema
@@ -68,17 +64,23 @@ public class ApiLostApplication extends SpringBootServletInitializer {
 				}
 				
 				pessoal = new ArrayList<Persona>();
-				pessoal.add(Persona.builder()
+				String password = "jacare";
+				Persona userMaster01 = Persona.builder()
 						.apelido("Teo")
 						.nome("João Paulo")
 						.fone("33 99906-5029")
 						.categoria("m")
 						.debito(BigDecimal.ZERO)
-						.senha(bCryptPasswordEncoder.encode("jacare"))
+						.senha(new BCryptPasswordEncoder().encode(password))
 						.roles(Arrays.asList(ADMIN))
-						.build());
+						.build();
+				userMaster01 = personaService.save(userMaster01);
+				log.info("Usuário criado ID:{}", userMaster01.getId());
+				log.info("Usuário criado Nome:{}", userMaster01.getNome());
+				log.info("Usuário criado Senha:{}", password);
+				pessoal.add(userMaster01);
 				
-				pessoal.forEach(pessoa -> personaService.save(pessoa));
+				//pessoal.forEach(pessoa -> personaService.save(pessoa));
 			}
 			
 		}	
