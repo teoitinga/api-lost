@@ -103,7 +103,7 @@ public class PersonaResource {
 	@PutMapping("{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@ApiOperation("Atualiza dados do cliente informado")
-	@ApiResponses({ @ApiResponse(code = 201, message = "Dados modificados com sucesso."),
+	@ApiResponses({ @ApiResponse(code = 204, message = "Dados modificados com sucesso."),
 			@ApiResponse(code = 400, message = "Erro ao modificar dados do cliente.") })
 	public void update(@PathVariable @ApiParam("ID do cliente") @Valid Integer id, @RequestBody ClientePutDto cliente) {
 
@@ -125,7 +125,7 @@ public class PersonaResource {
 	@GetMapping("pay/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@ApiOperation("Registra pagamento de todas as compras em aberto do cliente informado")
-	@ApiResponses({ @ApiResponse(code = 201, message = "Cliente quitou todos os débitos."),
+	@ApiResponses({ @ApiResponse(code = 204, message = "Cliente quitou todos os débitos."),
 			@ApiResponse(code = 400, message = "Erro ao registrar baixa em débitos do cliente.") })
 	public void payDebito(@PathVariable @ApiParam("ID do cliente") Integer id) {
 

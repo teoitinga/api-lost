@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT $JAVA_OPTS -jar target/api-lost0.0.1-SNAPSHOT
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar target/api-lost0.0.1-SNAPSHOT.jar
