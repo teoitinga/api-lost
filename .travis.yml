@@ -2,5 +2,5 @@ language: java
 jdk:
   - oraclejdk8
 dist: trusty
-before_intall:
+before_install:
   - chmod +x mvnw
