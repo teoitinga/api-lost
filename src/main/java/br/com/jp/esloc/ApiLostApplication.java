@@ -40,7 +40,11 @@ public class ApiLostApplication extends SpringBootServletInitializer {
 		SpringApplication.run(ApiLostApplication.class, args);
 	}
 	
-
+	@Bean
+	public PasswordEncoder bCryptPasswordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+	
 	@Component
 	public class CommandLineAppStartupRunner implements CommandLineRunner {
 		@Override
@@ -71,7 +75,8 @@ public class ApiLostApplication extends SpringBootServletInitializer {
 						.fone("33 99906-5029")
 						.categoria("m")
 						.debito(BigDecimal.ZERO)
-						.senha(new BCryptPasswordEncoder().encode(password))
+						//.senha(new BCryptPasswordEncoder().encode(password))
+						.senha(bCryptPasswordEncoder.encode(password))
 						.roles(Arrays.asList(ADMIN))
 						.build();
 				userMaster01 = personaService.save(userMaster01);
