@@ -76,7 +76,7 @@ public class ApiLostApplication extends SpringBootServletInitializer {
 						.categoria("m")
 						.debito(BigDecimal.ZERO)
 						//.senha(new BCryptPasswordEncoder().encode(password))
-						.senha(bCryptPasswordEncoder.encode(password))
+						.senha(new BCryptPasswordEncoder().encode(password))
 						.roles(Arrays.asList(ADMIN))
 						.build();
 				userMaster01 = personaService.save(userMaster01);
