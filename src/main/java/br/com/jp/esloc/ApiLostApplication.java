@@ -5,16 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import br.com.jp.esloc.apilost.models.Persona;
@@ -33,17 +28,10 @@ public class ApiLostApplication extends SpringBootServletInitializer {
 	@Autowired
 	private RoleService roleService;
 	
-	@Autowired
-	private PasswordEncoder bCryptPasswordEncoder;
-	
 	public static void main(String[] args) {
 		SpringApplication.run(ApiLostApplication.class, args);
 	}
 	
-	@Bean
-	public PasswordEncoder bCryptPasswordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
 	
 	@Component
 	public class CommandLineAppStartupRunner implements CommandLineRunner {
@@ -76,7 +64,7 @@ public class ApiLostApplication extends SpringBootServletInitializer {
 						.categoria("m")
 						.debito(BigDecimal.ZERO)
 						//.senha(new BCryptPasswordEncoder().encode(password))
-						.senha(new BCryptPasswordEncoder().encode(password))
+						.senha("sasa")//new BCryptPasswordEncoder().encode(password))
 						.roles(Arrays.asList(ADMIN))
 						.build();
 				userMaster01 = personaService.save(userMaster01);
