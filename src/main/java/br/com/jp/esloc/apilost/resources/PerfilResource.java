@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -70,13 +71,13 @@ public class PerfilResource {
 		return this.profileService.fluxoMensalCreditos();
 		
 	}
-	@GetMapping("/painel")
+	@GetMapping("/painel/{idUsuario}")
 	@ApiOperation("Obtem os dados de vendas")
 	@ApiResponses({ @ApiResponse(code = 200, message = "Painel de vendas."),
 		@ApiResponse(code = 404, message = "Não há registros.") })
-	public PainelDto getPainel() {
-		Integer idUsuario = 1;
-		
+	public PainelDto getPainel(@PathVariable Integer idUsuario) {
+		//Integer idUsuario = 1;
+		log.info("Buscando vendas de ID: " + idUsuario);
 		return PainelDto.builder()
 				.dataAtual(LocalDate.now())
 				.totalDebitos(this.profileService.getTotalDebitos())

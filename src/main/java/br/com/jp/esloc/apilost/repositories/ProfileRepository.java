@@ -27,7 +27,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer>{
 	
 	@Query(value = "select sum(valor_compra) from lost.compra where valor_compra < 0 and lost.compra.entregue_por = :id", nativeQuery = true)
 	BigDecimal TotalQuitadoPorUsuario(@Param("id") Integer id);
-	@Query(value = "select sum(valor_compra) from lost.compra where valor_compra >= 0 and lost.compra.entregue_por = :id", nativeQuery = true)
+	@Query(value = "select sum(valor_compra) from lost.compra where valor_compra >= 0 and lost.compra.entregue_por = :id and month(data_compra)=month(now()) and year(data_compra)=year(now())", nativeQuery = true)
 	BigDecimal TotalVendidoPorUsuario(@Param("id") Integer id);
 	@Query(value = "select sum(valor_compra) from lost.compra where lost.compra.entregue_por = :id", nativeQuery = true)
 	BigDecimal TotalDebitosPorUsuario(@Param("id") Integer id);
