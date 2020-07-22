@@ -3,6 +3,8 @@ package br.com.jp.esloc.apilost.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +12,11 @@ import org.springframework.data.domain.Pageable;
 import br.com.jp.esloc.apilost.domain.ClientePostDto;
 import br.com.jp.esloc.apilost.domain.ClientePutDto;
 import br.com.jp.esloc.apilost.domain.PersonaDto;
+import br.com.jp.esloc.apilost.domain.UserPutDto;
+import br.com.jp.esloc.apilost.domain.UserViewDto;
 import br.com.jp.esloc.apilost.exceptions.PersonaNotFoundException;
 import br.com.jp.esloc.apilost.models.Persona;
+import br.com.jp.esloc.apilost.models.Role;
 
 public interface PersonaService {
 	
@@ -29,5 +34,8 @@ public interface PersonaService {
 	Optional<List<PersonaDto>> toListPersonaDto(List<Persona> findClientes);
 	Persona create(ClientePutDto cliente);
 	void deleteAll();
+	List<UserViewDto> findAllUsers();
+	List<Role> findAllRoles();
+	Persona create(@Valid UserPutDto user);
 	
 }

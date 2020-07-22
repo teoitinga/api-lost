@@ -58,6 +58,11 @@ public class ApplicationControllerAdvice {//extends ResponseEntityExceptionHandl
 	public ApiErrors handlerPasswordInValidException(NumberFormatException ex) {
 		return new ApiErrors(ex.getMessage());
 	}
+	@ExceptionHandler(IllegalArgumentException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ApiErrors handlerIllegalArgumentException(IllegalArgumentException ex) {
+		return new ApiErrors(ex.getMessage());
+	}
 
 	@ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)

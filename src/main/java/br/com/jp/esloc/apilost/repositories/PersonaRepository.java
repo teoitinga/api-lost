@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import br.com.jp.esloc.apilost.models.Persona;
+import br.com.jp.esloc.apilost.models.Role;
 
 public interface PersonaRepository extends JpaRepository<Persona, Integer>{
 	@Query("select p from Persona p where (p.id = :login)")
@@ -19,5 +20,8 @@ public interface PersonaRepository extends JpaRepository<Persona, Integer>{
 	Page<Persona> search(String lowerCase, PageRequest pageRequest);
 
 	List<Persona> findByCategoria(String string);
+	
+	@Query(value = "select `persona`.id, `persona`.apelido, `role`.role from `persona` right join user_roles on persona.id=user_roles.user_id right join `lost`.`role` on `lost`.`role`.id = `lost`.`user_roles`.role_id where not isnull(`persona`.id)", nativeQuery = true)
+	List<Object[]> findOnlyUsers();
 
 }

@@ -17,9 +17,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
 	private PersonaService personaService;
 	
-	@Autowired
 	private PasswordEncoder bCryptPasswordEncoder;
 	
+	public UserDetailsServiceImpl(PasswordEncoder bCryptPasswordEncoder) {
+
+		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+	}
+
 	@Override
 	public Persona loadUserByUsername(String username) throws UsernameNotFoundException {
 		return this.personaService.findByLogin(username)
@@ -29,6 +33,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	
 	public Persona autenticar(Persona usuario) throws PasswordInValidException{
 		Persona user = loadUserByUsername(String.valueOf(usuario.getId()));
+
 		boolean passwordOk = bCryptPasswordEncoder.matches(usuario.getSenha(), user.getPassword());
 		if(passwordOk) {
 			return user;

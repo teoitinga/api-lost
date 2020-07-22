@@ -105,7 +105,7 @@ public class PersonaResource {
 	@ApiOperation("Atualiza dados do cliente informado")
 	@ApiResponses({ @ApiResponse(code = 204, message = "Dados modificados com sucesso."),
 			@ApiResponse(code = 400, message = "Erro ao modificar dados do cliente.") })
-	public void update(@PathVariable @ApiParam("ID do cliente") @Valid Integer id, @RequestBody ClientePutDto cliente) {
+	public void update(@PathVariable @ApiParam("ID do cliente") Integer id, @Valid @RequestBody ClientePutDto cliente) {
 
 		this.personaService.findById(id).map(clienteEncontradoNoBD -> {
 			//atualizando os dados e mantendo o restante
@@ -116,6 +116,7 @@ public class PersonaResource {
 			clienteEncontradoNoBD.setRg(cliente.getRg());
 			clienteEncontradoNoBD.setUsuario(cliente.getVendedor());
 			clienteEncontradoNoBD.setPrazo(cliente.getPrazo());
+			clienteEncontradoNoBD.setId(id);
 			
 			return this.personaService.save(clienteEncontradoNoBD);
 			

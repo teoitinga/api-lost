@@ -1,6 +1,7 @@
 package br.com.jp.esloc.apilost.services.impls;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,14 +13,22 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.jp.esloc.apilost.domain.ClientePostDto;
 import br.com.jp.esloc.apilost.domain.ClientePutDto;
 import br.com.jp.esloc.apilost.domain.PersonaDto;
+import br.com.jp.esloc.apilost.domain.UserPutDto;
+import br.com.jp.esloc.apilost.domain.UserViewDto;
 import br.com.jp.esloc.apilost.exceptions.PersonaNotFoundException;
+import br.com.jp.esloc.apilost.exceptions.RoleNotFoundException;
 import br.com.jp.esloc.apilost.models.Persona;
+import br.com.jp.esloc.apilost.models.Role;
 import br.com.jp.esloc.apilost.repositories.PersonaRepository;
+import br.com.jp.esloc.apilost.repositories.RoleRepository;
 import br.com.jp.esloc.apilost.services.PersonaService;
 
 @Service
@@ -27,12 +36,27 @@ public class PersonaServiceImpl implements PersonaService{
 	
 	@Autowired
 	private PersonaRepository personaRepository;
+	@Autowired
+	private RoleRepository roleRepository;
+
+	private PasswordEncoder bCryptPasswordEncoder;
 	
+	public PersonaServiceImpl(PasswordEncoder bCryptPasswordEncoder) {
+		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+	}
+
 	@Override
 	public Persona save(Persona persona) {
 		if(persona.getId() == null) {
 			persona.setDebito(BigDecimal.ZERO);
 		}
+		String senha = persona.getSenha();
+		if(senha != null) {
+			senha = bCryptPasswordEncoder.encode(senha);
+			persona.setSenha(senha);
+		}
+		System.out.println("Senha put: " + persona.getSenha());	
+		System.out.println("Senha put equal: " + bCryptPasswordEncoder.matches("123456", persona.getSenha()));	
 		return this.personaRepository.save(persona);
 	}
 
@@ -181,6 +205,70 @@ public class PersonaServiceImpl implements PersonaService{
 	@Override
 	public void deleteAll() {
 		this.personaRepository.deleteAll();
+	}
+
+	@Override
+	public List<UserViewDto> findAllUsers() {
+		List<Object[]> lista = this.personaRepository.findOnlyUsers();
+		return this.personaRepository.findOnlyUsers().stream().map(user->toUserViewDto(user))
+				.collect(Collectors.toList());
+
+	}
+	
+	private UserViewDto toUserViewDto(Object[] object) {
+		try {
+			return UserViewDto.builder()
+					.id(Long.parseLong(String.valueOf(object[0])))
+					.apelido(String.valueOf(object[1]))
+					.role(String.valueOf(object[2]))
+					.build();
+			
+		}catch(NumberFormatException ex) {
+			return null;
+		}
+	}
+
+	@Override
+	public List<Role> findAllRoles() {
+		return this.roleRepository.findAll();
+	}
+
+	@Override
+	public Persona create(UserPutDto user) {
+		//buscando ID do usuario atual
+		Authentication authentication = (Authentication) SecurityContextHolder.getContext().getAuthentication(); 
+		Persona usuarioAtual = null;
+		
+		if(authentication != null){
+			Object obj = authentication.getPrincipal();
+			
+			if (obj instanceof Persona){
+				usuarioAtual = (Persona) obj;
+			}		
+		}		
+		//obtem o perfil do usuario no qual se pretende modificar os registros
+		Persona usuario = this.personaRepository.findById(user.getId()).orElseThrow(()->new PersonaNotFoundException("Usuário não encontrado no banco de dados."));
+		
+		//obtem a Role
+		Role role = this.roleRepository.findByPermissao(user.getRole()).orElseThrow(()->new RoleNotFoundException());;
+
+		return Persona.builder()
+				.id(usuario.getId())
+				.nome(user.getNome())
+				.rg(user.getRg().toUpperCase())
+				.apelido(user.getApelido())
+				.endereco(user.getEndereco())
+				.fone(usuario.getFone())
+				.usuario(usuarioAtual.getId())
+				.prazo(usuario.getPrazo())
+				.state(usuario.getState())
+				.senha(this.bCryptPasswordEncoder.encode(user.getSenha()))
+				.categoria(usuario.getCategoria())
+				.dataCadastro(usuario.getDataCadastro())
+				.debito(usuario.getDebito())
+				
+				.roles(Arrays.asList(role))
+			.build();
 	}
 
 }

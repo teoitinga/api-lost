@@ -29,7 +29,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private JwtService jwtService;
 
+	private PasswordEncoder bCryptPasswordEncoder;
 	
+	public SecurityConfig(PasswordEncoder bCryptPasswordEncoder) {
+		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+	}
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().authorizeRequests()
@@ -49,10 +54,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return new JwtAuthFilter(this.jwtService, this.userDetailsService);
 	}
 
-	@Bean
-	public PasswordEncoder bCryptPasswordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
@@ -63,7 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
-		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);//bCryptPasswordEncoder());
 
 	}
 }
